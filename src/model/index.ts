@@ -1,3 +1,4 @@
 export * from './task.model'
 export * from './register.model'
+export * from './contract-type.model'
 export * from './country.model'

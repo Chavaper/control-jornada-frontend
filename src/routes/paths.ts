@@ -1,6 +1,7 @@
 const ROOTS = {
   TASK: '/task',
   REGISTER: '/register',
+  CONTRACT_TYPE: '/contract-type',
   COUNTRY: '/country'
 }
 
@@ -19,6 +20,14 @@ export const paths = {
     list: `${ROOTS.REGISTER}/list`,
     add: `${ROOTS.REGISTER}/add`,
     edit: (id: string | number) => `${ROOTS.REGISTER}/add/${id}`
+  },
+
+  contractType: {
+    root: `${ROOTS.CONTRACT_TYPE}/list`,
+    list: `${ROOTS.CONTRACT_TYPE}/list`,
+    add: `${ROOTS.CONTRACT_TYPE}/add`,
+    edit: (id: string | number) =>
+      `${ROOTS.CONTRACT_TYPE}/add/${id}`
   },
 
   country: {
