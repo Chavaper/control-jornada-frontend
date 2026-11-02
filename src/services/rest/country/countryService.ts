@@ -1,7 +1,6 @@
 import { handleResponse, JSON_HEADERS } from '@/helpers/API'
 import { CountryModel, CountryRequest } from '@/model/country.model'
 
-
 //const apiUrl = `${process.env.BASE_URL_EXAMPLE}/country`
 const apiUrl = 'http://localhost:8080/v1/template/country'
 
@@ -26,10 +25,12 @@ export const saveCountry = async (country: CountryRequest): Promise<CountryModel
 
 export const updateCountry = async (
   id: string | number,
-  country: CountryRequest
+  //country: CountryRequest
+  country: CountryModel
 ): Promise<CountryModel> => {
-  const response = await fetch(`${apiUrl}/${id}`, {
-    method: 'PUT',
+  //const response = await fetch(`${apiUrl}/${id}`, {
+  const response = await fetch(`${apiUrl}`, {
+    method: 'POST',
     headers: JSON_HEADERS,
     body: JSON.stringify(country)
   })
