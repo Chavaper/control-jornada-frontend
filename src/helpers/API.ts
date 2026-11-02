@@ -41,7 +41,28 @@ export const handleResponse = async <T>(response: Response): Promise<T> => {
 
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof ApiError) {
+    const bodyMessage =
+      typeof error.body === 'object' &&
+      error.body !== null &&
+      'message' in error.body
+        ? String((error.body as { message: unknown }).message)
+        : ''
+
+    const fullMessage = `${error.message} ${bodyMessage}`.toLowerCase()
+
+    if (
+      fullMessage.includes('foreign key') ||
+      fullMessage.includes('referential') ||
+      fullMessage.includes('constraint') ||
+      fullMessage.includes('violates')
+    ) {
+      return 'No se puede eliminar este tipo de contrato porque está siendo utilizado'
+    }
+
     if (error.status === 404) return 'El registro no existe'
+    if (error.status === 409) {
+      return 'La operación no se puede completar porque existe un conflicto con los datos'
+    }
     if (error.status >= 500) return 'Error en el servidor, intenta más tarde'
     return error.message
   }
