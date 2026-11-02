@@ -12,8 +12,9 @@ import { getErrorMessage } from '@/helpers/API'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
-import { countryById, saveCountry, saveTask, taskById, updateCountry, updateTask } from '@/services/rest'
+import { countryById, saveCountry, updateCountry } from '@/services/rest'
 import { COUNTRY_DEFAULT_VALUES, CountryFormValues, CountrySchema } from './country'
+import { CountryModel } from '@/model'
 
 
 
@@ -61,7 +62,8 @@ export default function CountryNewEditForm({ countryId }: Props) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       if (countryId) {
-        await updateCountry(countryId, data)
+        const c: CountryModel = {...data, id: Number(countryId)};
+        await updateCountry(countryId, c)
         enqueueSnackbar('País actualizada')
       } else {
         await saveCountry(data)
@@ -87,8 +89,8 @@ export default function CountryNewEditForm({ countryId }: Props) {
         <Stack spacing={3}>
           <RHFTextField name="name" label="Nombre" required />
           <RHFTextField
-            name="name"
-            label="Nombre"
+            name="nationality"
+            label="Nacionalidad"
             multiline
             rows={3}
           />
