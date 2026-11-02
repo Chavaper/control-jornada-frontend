@@ -6,10 +6,31 @@ import {
 
 const apiUrl = `${process.env.BASE_URL_API}/v1/template/contract-type`
 
-export const allContractTypes = async (): Promise<ContractTypeModel[]> => {
-  const response = await fetch(apiUrl)
+/**
+ * Centraliza las llamadas del módulo y convierte una caída del backend
+ * en un error que las vistas pueden mostrar mediante getErrorMessage.
+ */
+const request = async <T>(
+  input: RequestInfo,
+  init?: RequestInit
+): Promise<T> => {
+  try {
+    const response = await fetch(input, init)
 
-  return handleResponse<ContractTypeModel[]>(response)
+    return handleResponse<T>(response)
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new TypeError('No se pudo conectar con el servidor', {
+        cause: error
+      })
+    }
+
+    throw error
+  }
+}
+
+export const allContractTypes = async (): Promise<ContractTypeModel[]> => {
+  return request<ContractTypeModel[]>(apiUrl)
 }
 
 /**
@@ -28,29 +49,23 @@ export const nextContractTypeId = async (): Promise<number> => {
 export const contractTypeById = async (
   id: string | number
 ): Promise<ContractTypeModel> => {
-  const response = await fetch(`${apiUrl}/${id}`)
-
-  return handleResponse<ContractTypeModel>(response)
+  return request<ContractTypeModel>(`${apiUrl}/${id}`)
 }
 
 export const saveContractType = async (
   contractType: ContractTypeRequest | ContractTypeModel
 ): Promise<ContractTypeModel> => {
-  const response = await fetch(apiUrl, {
+  return request<ContractTypeModel>(apiUrl, {
     method: 'POST',
     headers: JSON_HEADERS,
     body: JSON.stringify(contractType)
   })
-
-  return handleResponse<ContractTypeModel>(response)
 }
 
 export const deleteContractType = async (
   id: string | number
 ): Promise<void> => {
-  const response = await fetch(`${apiUrl}/${id}`, {
+  return request<void>(`${apiUrl}/${id}`, {
     method: 'DELETE'
   })
-
-  return handleResponse<void>(response)
 }
