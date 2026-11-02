@@ -1,33 +1,10 @@
-import { handleResponse, JSON_HEADERS } from '@/helpers/API'
+import { JSON_HEADERS, request } from '@/helpers/API'
 import {
   ContractTypeModel,
   ContractTypeRequest
 } from '@/model'
 
 const apiUrl = `${process.env.BASE_URL_API}/v1/template/contract-type`
-
-/**
- * Centraliza las llamadas del módulo y convierte una caída del backend
- * en un error que las vistas pueden mostrar mediante getErrorMessage.
- */
-const request = async <T>(
-  input: RequestInfo,
-  init?: RequestInit
-): Promise<T> => {
-  try {
-    const response = await fetch(input, init)
-
-    return handleResponse<T>(response)
-  } catch (error) {
-    if (error instanceof TypeError) {
-      throw new TypeError('No se pudo conectar con el servidor', {
-        cause: error
-      })
-    }
-
-    throw error
-  }
-}
 
 export const allContractTypes = async (): Promise<ContractTypeModel[]> => {
   return request<ContractTypeModel[]>(apiUrl)
