@@ -16,6 +16,9 @@ export interface NavGroup {
 export const navData: NavGroup[] = [
   {
     subheader: 'Opciones',
-    items: [{ title: 'Tareas', path: paths.task.root, icon: <TaskIcon /> }]
+    items: [
+      { title: 'Tareas', path: paths.task.root, icon: <TaskIcon /> },
+      { title: 'Países', path: paths.country.root, icon: <TaskIcon /> }
+    ]
   }
 ]
