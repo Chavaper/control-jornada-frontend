@@ -1,6 +1,7 @@
 const ROOTS = {
   TASK: '/task',
   CONTRACT_TYPE: '/contract-type'
+  COUNTRY: '/country'
 }
 
 export const paths = {
@@ -19,5 +20,10 @@ export const paths = {
     add: `${ROOTS.CONTRACT_TYPE}/add`,
     edit: (id: string | number) =>
       `${ROOTS.CONTRACT_TYPE}/add/${id}`
+  country: {
+    root: `${ROOTS.COUNTRY}/list`,
+    list: `${ROOTS.COUNTRY}/list`,
+    add: `${ROOTS.COUNTRY}/add`,
+    edit: (id: string | number) => `${ROOTS.COUNTRY}/add/${id}`
   }
 }
