@@ -18,6 +18,7 @@ import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
 import {
     contractTypeById,
+  nextContractTypeId,
     saveContractType
 } from '@/services/rest'
 
@@ -94,7 +95,12 @@ export default function ContractTypeNewEditForm({
 
                 enqueueSnackbar('Tipo de contrato actualizado')
             } else {
-                await saveContractType(data)
+                const id = await nextContractTypeId()
+
+                await saveContractType({
+                    id,
+                    ...data
+                })
 
                 enqueueSnackbar('Tipo de contrato creado')
             }
