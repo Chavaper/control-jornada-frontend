@@ -12,7 +12,7 @@ import { getErrorMessage } from '@/helpers/API'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
-import { cityById, saveCity, updateCity } from '@/services/rest'
+import { allCities, cityById, saveCity, updateCity } from '@/services/rest'
 
 import { CITY_DEFAULT_VALUES, CityFormValues, CitySchema } from './city'
 
@@ -42,7 +42,7 @@ export default function CityNewEditForm({ cityId }: Props) {
     const getCity = async () => {
       try {
         const city = await cityById(cityId)
-        reset({ id: city.id, name: city.name, regionId: city.regionId })
+        reset({ name: city.name, regionId: city.regionId })
       } catch (error) {
         enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
         router.push(paths.city.list)
@@ -60,7 +60,9 @@ export default function CityNewEditForm({ cityId }: Props) {
         await updateCity(cityId, data)
         enqueueSnackbar('Ciudad actualizada')
       } else {
-        await saveCity(data)
+        const cities = await allCities()
+        const nextId = Math.max(0, ...cities.map((city) => city.id)) + 1
+        await saveCity({ ...data, id: nextId })
         enqueueSnackbar('Ciudad creada')
       }
       router.push(paths.city.list)
@@ -81,13 +83,6 @@ export default function CityNewEditForm({ cityId }: Props) {
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Card sx={{ p: 3 }}>
         <Stack spacing={3}>
-          <RHFTextField
-            name="id"
-            label="ID"
-            type="number"
-            required
-            disabled={!!cityId}
-          />
           <RHFTextField name="name" label="Nombre" required />
           <RHFTextField
             name="regionId"

@@ -1,5 +1,5 @@
 import { handleResponse, JSON_HEADERS } from '@/helpers/API'
-import { CityModel } from '@/model'
+import { CityModel, CityRequest } from '@/model'
 
 const apiUrl = `${process.env.BASE_URL_API}/v1/template/city`
 
@@ -24,7 +24,7 @@ export const saveCity = async (city: CityModel): Promise<CityModel> => {
 
 export const updateCity = async (
   id: string | number,
-  city: CityModel
+  city: CityRequest
 ): Promise<CityModel> => {
   const response = await fetch(`${apiUrl}/${id}`, {
     method: 'PUT',

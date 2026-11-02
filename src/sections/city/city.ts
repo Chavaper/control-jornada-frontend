@@ -10,11 +10,6 @@ export const TABLE_HEAD: TableHeadItem[] = [
 ]
 
 export const CitySchema = Yup.object({
-  id: Yup.number()
-    .typeError('El ID debe ser un número')
-    .required('El ID es obligatorio')
-    .integer('El ID debe ser un número entero')
-    .positive('El ID debe ser mayor que 0'),
   name: Yup.string()
     .trim()
     .required('El nombre es obligatorio')

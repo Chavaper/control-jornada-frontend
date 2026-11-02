@@ -3,3 +3,5 @@ export interface CityModel {
   name: string
   regionId: number
 }
+
+export type CityRequest = Omit<CityModel, 'id'>
