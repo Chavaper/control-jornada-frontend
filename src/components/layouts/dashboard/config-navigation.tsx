@@ -1,4 +1,5 @@
 import TaskIcon from '@mui/icons-material/TaskAltOutlined'
+import LocationCityIcon from '@mui/icons-material/LocationCityOutlined'
 
 import { paths } from '@/routes/paths'
 
@@ -16,6 +17,9 @@ export interface NavGroup {
 export const navData: NavGroup[] = [
   {
     subheader: 'Opciones',
-    items: [{ title: 'Tareas', path: paths.task.root, icon: <TaskIcon /> }]
+    items: [
+      { title: 'Tareas', path: paths.task.root, icon: <TaskIcon /> },
+      { title: 'Ciudades', path: paths.city.root, icon: <LocationCityIcon /> }
+    ]
   }
 ]
