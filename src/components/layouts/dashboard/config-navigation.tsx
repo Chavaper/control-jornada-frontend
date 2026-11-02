@@ -24,6 +24,7 @@ export const navData: NavGroup[] = [
         path: paths.contractType.root,
         icon: <DescriptionIcon />
       }
+      { title: 'Países', path: paths.country.root, icon: <TaskIcon /> }
     ]
   }
 ]
