@@ -13,7 +13,7 @@ import { Controller, useForm } from 'react-hook-form'
 import FormProvider, { RHFTextField } from '@/components/hook-form'
 import { useSnackbar } from '@/components/snackbar'
 import { getErrorMessage } from '@/helpers/API'
-import { allBranches, allCompanies, jobTypeById, saveJobType } from '@/services/rest'
+  import { allBranches, allCompanies, createJobType, jobTypeById, updateJobType } from '@/services/rest'
 import { BranchModel, CompanyOption } from '@/model'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
@@ -52,7 +52,11 @@ export default function JobTypeNewEditForm({ jobTypeId }: Props) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await saveJobType(jobTypeId ? { id: Number(jobTypeId), ...data } : data)
+      if (jobTypeId) {
+        await updateJobType(jobTypeId, data)
+      } else {
+        await createJobType(data)
+      }
       enqueueSnackbar(jobTypeId ? 'Tipo de trabajo actualizado' : 'Tipo de trabajo creado')
       router.push(paths.jobType.list)
     } catch (error) { enqueueSnackbar(getErrorMessage(error), { variant: 'error' }) }

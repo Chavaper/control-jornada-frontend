@@ -13,7 +13,7 @@ import { Controller, useForm } from 'react-hook-form'
 import FormProvider, { RHFSwitch, RHFTextField } from '@/components/hook-form'
 import { useSnackbar } from '@/components/snackbar'
 import { getErrorMessage } from '@/helpers/API'
-import { allCompanies, allCommunes, branchById, saveBranch } from '@/services/rest'
+  import { allCompanies, allCommunes, branchById, createBranch, updateBranch } from '@/services/rest'
 import { CompanyOption, CommuneOption } from '@/model'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
@@ -78,7 +78,11 @@ export default function BranchNewEditForm({ branchId }: Props) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await saveBranch(branchId ? { id: Number(branchId), ...data } : data)
+      if (branchId) {
+        await updateBranch(branchId, data)
+      } else {
+        await createBranch(data)
+      }
       enqueueSnackbar(branchId ? 'Sucursal actualizada' : 'Sucursal creada')
       router.push(paths.branch.list)
     } catch (error) {

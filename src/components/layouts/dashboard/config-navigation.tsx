@@ -1,5 +1,7 @@
 import TaskIcon from '@mui/icons-material/TaskAltOutlined'
 import DescriptionIcon from '@mui/icons-material/DescriptionOutlined'
+import BusinessIcon from '@mui/icons-material/BusinessOutlined'
+import WorkIcon from '@mui/icons-material/WorkOutlineOutlined'
 
 import { paths } from '@/routes/paths'
 
@@ -24,9 +26,9 @@ export const navData: NavGroup[] = [
         path: paths.contractType.root,
         icon: <DescriptionIcon />
       },
-      { title: 'Países', path: paths.country.root, icon: <TaskIcon /> }
-      , { title: 'Sucursales', path: paths.branch.root, icon: <TaskIcon /> }
-      , { title: 'Tipos de trabajo', path: paths.jobType.root, icon: <TaskIcon /> }
+      { title: 'Países', path: paths.country.root, icon: <TaskIcon /> },
+      { title: 'Sucursales', path: paths.branch.root, icon: <BusinessIcon /> },
+      { title: 'Tipos de trabajo', path: paths.jobType.root, icon: <WorkIcon /> }
     ]
   }
 ]

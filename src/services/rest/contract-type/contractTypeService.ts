@@ -10,23 +10,23 @@ export const allContractTypes = async (): Promise<ContractTypeModel[]> => {
   return request<ContractTypeModel[]>(apiUrl)
 }
 
-/**
- * El esquema actual de la base de datos no genera el id automáticamente.
- * Para crear desde el frontend enviamos el siguiente id disponible.
- */
 export const contractTypeById = async (
   id: string | number
 ): Promise<ContractTypeModel> => {
   return request<ContractTypeModel>(`${apiUrl}/${id}`)
 }
 
-export const saveContractType = async (
-  contractType: ContractTypeRequest | ContractTypeModel
-): Promise<ContractTypeModel> => {
+export const createContractType = async (contractType: ContractTypeRequest): Promise<ContractTypeModel> => {
   return request<ContractTypeModel>(apiUrl, {
     method: 'POST',
     headers: JSON_HEADERS,
     body: JSON.stringify(contractType)
+  })
+}
+
+export const updateContractType = async (id: string | number, contractType: ContractTypeRequest): Promise<ContractTypeModel> => {
+  return request<ContractTypeModel>(`${apiUrl}/${id}`, {
+    method: 'PUT', headers: JSON_HEADERS, body: JSON.stringify(contractType)
   })
 }
 

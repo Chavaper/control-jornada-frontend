@@ -18,7 +18,8 @@ import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
 import {
     contractTypeById,
-    saveContractType
+    createContractType,
+    updateContractType
 } from '@/services/rest'
 
 import {
@@ -86,15 +87,11 @@ export default function ContractTypeNewEditForm({
     const onSubmit = handleSubmit(async (data) => {
         try {
             if (contractTypeId) {
-                await saveContractType({
-                    // Convertimos el id a number porque el backend espera un number
-                    id: Number(contractTypeId),
-                    ...data
-                })
+                await updateContractType(contractTypeId, data)
 
                 enqueueSnackbar('Tipo de contrato actualizado')
             } else {
-                await saveContractType(data)
+                await createContractType(data)
 
                 enqueueSnackbar('Tipo de contrato creado')
             }

@@ -11,13 +11,17 @@ export const jobTypeById = async (id: string | number): Promise<JobTypeModel> =>
   return request<JobTypeModel>(`${apiUrl}/${id}`)
 }
 
-export const saveJobType = async (
-  jobType: JobTypeRequest | JobTypeModel
-): Promise<JobTypeModel> => {
+export const createJobType = async (jobType: JobTypeRequest): Promise<JobTypeModel> => {
   return request<JobTypeModel>(apiUrl, {
     method: 'POST',
     headers: JSON_HEADERS,
     body: JSON.stringify(jobType)
+  })
+}
+
+export const updateJobType = async (id: string | number, jobType: JobTypeRequest): Promise<JobTypeModel> => {
+  return request<JobTypeModel>(`${apiUrl}/${id}`, {
+    method: 'PUT', headers: JSON_HEADERS, body: JSON.stringify(jobType)
   })
 }
 

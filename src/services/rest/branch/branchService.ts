@@ -21,13 +21,17 @@ export const branchById = async (id: string | number): Promise<BranchModel> => {
   return request<BranchModel>(`${apiUrl}/${id}`)
 }
 
-export const saveBranch = async (
-  branch: BranchRequest | BranchModel
-): Promise<BranchModel> => {
+export const createBranch = async (branch: BranchRequest): Promise<BranchModel> => {
   return request<BranchModel>(apiUrl, {
     method: 'POST',
     headers: JSON_HEADERS,
     body: JSON.stringify(branch)
+  })
+}
+
+export const updateBranch = async (id: string | number, branch: BranchRequest): Promise<BranchModel> => {
+  return request<BranchModel>(`${apiUrl}/${id}`, {
+    method: 'PUT', headers: JSON_HEADERS, body: JSON.stringify(branch)
   })
 }
 
