@@ -5,7 +5,7 @@ import { TableHeadItem } from '@/components/table'
 export const TABLE_HEAD: TableHeadItem[] = [
   { id: 'id', label: '#', width: 80 },
   { id: 'name', label: 'Nombre' },
-  { id: 'nationality', label: 'Nationality', sortable: false },
+  { id: 'nationality', label: 'Nacionalidad', sortable: false },
   //{ id: 'completed', label: 'Activo', width: 140 },
   { id: '', width: 110, align: 'right' }
 ]

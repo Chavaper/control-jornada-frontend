@@ -19,25 +19,26 @@ import {
   useTable
 } from '@/components/table'
 import { getErrorMessage } from '@/helpers/API'
-import { RouterLink } from '@/routes/components'
-import { useRouter } from '@/routes/hooks'
+import { useBoolean } from '@/hooks/use-boolean'
 import { paths } from '@/routes/paths'
 import { allCountries, deleteCountry } from '@/services/rest'
 import { getComparator, includesText, Order } from '@/utils/table-filter'
 
 import { TABLE_HEAD } from '../country'
 import { CountryModel } from '@/model/country.model'
+import CountryNewEditDialog from '../country-new-edit-dialog'
 import CountryTableRow from '../country-table-row'
 import CountryTableToolbar from '../country-table-toolbar'
 
 export default function CountryListView() {
-  const router = useRouter()
   const table = useTable()
+  const dialog = useBoolean()
   const { enqueueSnackbar } = useSnackbar()
 
   const [countryList, setCountryList] = useState<CountryModel[]>([])
   const [loading, setLoading] = useState(true)
   const [searchText, setSearchText] = useState('')
+  const [editingId, setEditingId] = useState<string>()
 
   useEffect(() => {
     const getCountries = async () => {
@@ -84,18 +85,32 @@ export default function CountryListView() {
     }
   }
 
+  const handleAdd = () => {
+    setEditingId(undefined)
+    dialog.onTrue()
+  }
+
+  const handleEdit = (id: number) => {
+    setEditingId(String(id))
+    dialog.onTrue()
+  }
+
+  const handleSaved = (saved: CountryModel) => {
+    setCountryList((prev) =>
+      prev.some((country) => country.id === saved.id)
+        ? prev.map((country) => (country.id === saved.id ? saved : country))
+        : [...prev, saved]
+    )
+    dialog.onFalse()
+  }
+
   return (
     <Container maxWidth="xl">
       <CustomBreadcrumbs
         heading="Lista de países"
         links={[{ name: 'Países', href: paths.country.root }, { name: 'Lista' }]}
         action={
-          <Button
-            component={RouterLink}
-            href={paths.country.add}
-            variant="contained"
-            startIcon={<AddIcon />}
-          >
+          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
             Agregar
           </Button>
         }
@@ -122,13 +137,17 @@ export default function CountryListView() {
                   <CountryTableRow
                     key={row.id}
                     row={row}
-                    onEditRow={() => router.push(paths.country.edit(row.id))}
+                    onEditRow={() => handleEdit(row.id)}
                     onDeleteRow={() => handleDeleteRow(row.id)}
                   />
                 ))}
 
               {!loading && !dataFiltered.length && (
-                <TableNoData colSpan={TABLE_HEAD.length} />
+                <TableNoData 
+                  colSpan={TABLE_HEAD.length} 
+                  message='No hay países por mostrar'
+                  image={countryList.length ? undefined : '/assets/illustrations/empty-table.svg'}
+                />
               )}
             </TableBody>
           </Table>
@@ -142,6 +161,13 @@ export default function CountryListView() {
           onRowsPerPageChange={table.onChangeRowsPerPage}
         />
       </Card>
+
+      <CountryNewEditDialog
+        open={dialog.value}
+        countryId={editingId}
+        onClose={dialog.onFalse}
+        onSaved={handleSaved}
+      />
     </Container>
   )
 }
