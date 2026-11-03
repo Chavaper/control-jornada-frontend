@@ -27,7 +27,7 @@ export default function JustificationTypeTableRow({
     <>
       <TableRow hover>
         <TableCell>{row.id}</TableCell>
-        <TableCell sx={{ color: 'text.secondary' }}>{row.name}</TableCell>
+        <TableCell>{row.name}</TableCell>
         <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
           <Tooltip title="Editar">
             <IconButton onClick={onEditRow}>
