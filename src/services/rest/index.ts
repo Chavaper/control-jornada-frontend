@@ -1,4 +1,6 @@
 export * from './task/taskService'
+export * from './justification-type/justification-type-service'
 export * from './register/registerService'
 export * from './country/countryService'
 export * from './contract-type/contractTypeService'
+export * from './city/cityService'
