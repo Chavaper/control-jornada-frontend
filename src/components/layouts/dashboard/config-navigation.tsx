@@ -1,5 +1,6 @@
 import TaskIcon from '@mui/icons-material/TaskAltOutlined'
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
+import DescriptionIcon from '@mui/icons-material/DescriptionOutlined'
 
 import { paths } from '@/routes/paths'
 
@@ -24,6 +25,15 @@ export const navData: NavGroup[] = [
         path: paths.justificationType.root,
         icon: <CommentOutlinedIcon />
       }
+    ]
+    items: [
+      { title: 'Tareas', path: paths.task.root, icon: <TaskIcon /> },
+      {
+        title: 'Tipos de contrato',
+        path: paths.contractType.root,
+        icon: <DescriptionIcon />
+      }
+      { title: 'Países', path: paths.country.root, icon: <TaskIcon /> }
     ]
   }
 ]
