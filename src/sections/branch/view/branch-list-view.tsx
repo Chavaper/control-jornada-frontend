@@ -20,7 +20,7 @@ import { BranchModel } from '@/model'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
-import { allBranches, deleteBranch } from '@/services/rest'
+import { allBranches, deleteBranch, updateBranch } from '@/services/rest'
 
 import BranchTableRow from '../branch-table-row'
 import { TABLE_HEAD } from '../branch'
@@ -40,11 +40,33 @@ export default function BranchListView() {
     catch (error) { enqueueSnackbar(getErrorMessage(error), { variant: 'error' }) }
   }
 
+  const toggleActive = async (branch: BranchModel, active: boolean) => {
+    try {
+      const updatedBranch = await updateBranch(branch.id, {
+        companyId: branch.companyId,
+        communeId: branch.communeId,
+        name: branch.name,
+        address: branch.address,
+        phone: branch.phone ?? '',
+        alias: branch.alias ?? '',
+        active
+      })
+
+      setBranches((items) => items.map((item) => item.id === branch.id
+        ? { ...item, ...updatedBranch, active }
+        : item
+      ))
+      enqueueSnackbar(active ? 'Sucursal activada' : 'Sucursal desactivada')
+    } catch (error) {
+      enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
+    }
+  }
+
   return <Container maxWidth="xl">
     <CustomBreadcrumbs heading="Sucursales" links={[{ name: 'Sucursales', href: paths.branch.list }, { name: 'Lista' }]} action={<Button component={RouterLink} href={paths.branch.add} variant="contained" startIcon={<AddIcon />}>Agregar</Button>} sx={{ mb: 3 }} />
     <Card><TableContainer><Table><TableHead><TableRow>{TABLE_HEAD.map((head) => <TableCell key={head.id || 'actions'} align={head.align} sx={{ width: head.width }}>{head.label}</TableCell>)}</TableRow></TableHead><TableBody>
       {loading && <TableLoading colSpan={TABLE_HEAD.length} />}
-      {!loading && branches.map((row) => <BranchTableRow key={row.id} row={row} onEditRow={() => router.push(paths.branch.edit(row.id))} onDeleteRow={() => remove(row.id)} />)}
+      {!loading && branches.map((row) => <BranchTableRow key={row.id} row={row} onEditRow={() => router.push(paths.branch.edit(row.id))} onDeleteRow={() => remove(row.id)} onToggleActive={(active) => toggleActive(row, active)} />)}
       {!loading && !branches.length && <TableNoData colSpan={TABLE_HEAD.length} />}
     </TableBody></Table></TableContainer></Card>
   </Container>

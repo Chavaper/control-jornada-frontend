@@ -6,6 +6,8 @@ export const TABLE_HEAD: TableHeadItem[] = [
   { id: 'id', label: '#', width: 70 },
   { id: 'name', label: 'Nombre' },
   { id: 'address', label: 'Dirección' },
+  { id: 'phone', label: 'Teléfono' },
+  { id: 'alias', label: 'Alias' },
   { id: 'active', label: 'Activa', width: 100 },
   { id: '', width: 110, align: 'right' }
 ]
