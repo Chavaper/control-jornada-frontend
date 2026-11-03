@@ -1,5 +1,6 @@
 const ROOTS = {
-  TASK: '/task'
+  TASK: '/task',
+  JUSTIFICATION_TYPE: '/justification-type'
 }
 
 export const paths = {
@@ -9,5 +10,11 @@ export const paths = {
     list: `${ROOTS.TASK}/list`,
     add: `${ROOTS.TASK}/add`,
     edit: (id: string | number) => `${ROOTS.TASK}/add/${id}`
+  },
+  justificationType: {
+    root: `${ROOTS.JUSTIFICATION_TYPE}/list`,
+    list: `${ROOTS.JUSTIFICATION_TYPE}/list`,
+    add: `${ROOTS.JUSTIFICATION_TYPE}/add`,
+    edit: (id: number) => `${ROOTS.JUSTIFICATION_TYPE}/add/${id}`
   }
 }
