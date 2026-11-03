@@ -1,3 +1,4 @@
+import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
 import DescriptionIcon from '@mui/icons-material/DescriptionOutlined'
 import LocationCityIcon from '@mui/icons-material/LocationCityOutlined'
 import TaskIcon from '@mui/icons-material/TaskAltOutlined'
@@ -20,6 +21,11 @@ export const navData: NavGroup[] = [
     subheader: 'Opciones',
     items: [
       { title: 'Tareas', path: paths.task.root, icon: <TaskIcon /> },
+      {
+        title: 'Tipo de justificación',
+        path: paths.justificationType.root,
+        icon: <CommentOutlinedIcon />
+      },
       {
         title: 'Tipos de contrato',
         path: paths.contractType.root,
