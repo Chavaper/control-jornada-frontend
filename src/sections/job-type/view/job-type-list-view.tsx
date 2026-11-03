@@ -16,13 +16,11 @@ import CustomBreadcrumbs from '@/components/custom-breadcrumbs'
 import { TableLoading, TableNoData } from '@/components/table'
 import { useSnackbar } from '@/components/snackbar'
 import { getErrorMessage } from '@/helpers/API'
-import { BranchModel, CompanyOption, JobTypeModel } from '@/model'
+import { JobTypeModel } from '@/model'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
 import {
-  allBranches,
-  allCompanies,
   allJobTypes,
   deleteJobType
 } from '@/services/rest'
@@ -34,23 +32,16 @@ export default function JobTypeListView() {
   const router = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const [jobTypes, setJobTypes] = useState<JobTypeModel[]>([])
-  const [companies, setCompanies] = useState<CompanyOption[]>([])
-  const [branches, setBranches] = useState<BranchModel[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    Promise.all([allJobTypes(), allCompanies(), allBranches()])
-      .then(([jobTypeList, companyList, branchList]) => {
+    allJobTypes()
+      .then((jobTypeList) => {
         setJobTypes(jobTypeList)
-        setCompanies(companyList)
-        setBranches(branchList)
       })
       .catch((error) => enqueueSnackbar(getErrorMessage(error), { variant: 'error' }))
       .finally(() => setLoading(false))
   }, [enqueueSnackbar])
-
-  const companyNames = new Map(companies.map((company) => [company.id, company.name]))
-  const branchNames = new Map(branches.map((branch) => [branch.id, branch.name]))
 
   const remove = async (id: number) => {
     try { await deleteJobType(id); setJobTypes((items) => items.filter((item) => item.id !== id)); enqueueSnackbar('Tipo de trabajo eliminado') }
@@ -61,7 +52,7 @@ export default function JobTypeListView() {
     <CustomBreadcrumbs heading="Tipos de trabajo" links={[{ name: 'Tipos de trabajo', href: paths.jobType.list }, { name: 'Lista' }]} action={<Button component={RouterLink} href={paths.jobType.add} variant="contained" startIcon={<AddIcon />}>Agregar</Button>} sx={{ mb: 3 }} />
     <Card><TableContainer><Table><TableHead><TableRow>{TABLE_HEAD.map((head) => <TableCell key={head.id || 'actions'} align={head.align} sx={{ width: head.width }}>{head.label}</TableCell>)}</TableRow></TableHead><TableBody>
       {loading && <TableLoading colSpan={TABLE_HEAD.length} />}
-      {!loading && jobTypes.map((row) => <JobTypeTableRow key={row.id} row={row} companyName={companyNames.get(row.companyId) ?? 'Empresa no disponible'} branchName={branchNames.get(row.branchId) ?? 'Sucursal no disponible'} onEditRow={() => router.push(paths.jobType.edit(row.id))} onDeleteRow={() => remove(row.id)} />)}
+      {!loading && jobTypes.map((row) => <JobTypeTableRow key={row.id} row={row} companyName={row.companyName ?? 'Empresa no disponible'} branchName={row.branchName ?? 'Sucursal no disponible'} onEditRow={() => router.push(paths.jobType.edit(row.id))} onDeleteRow={() => remove(row.id)} />)}
       {!loading && !jobTypes.length && <TableNoData colSpan={TABLE_HEAD.length} />}
     </TableBody></Table></TableContainer></Card>
   </Container>

@@ -2,6 +2,8 @@ export interface BranchModel {
   id: number
   companyId: number
   communeId: number
+  companyName?: string | null
+  communeName?: string | null
   name: string
   address: string
   phone?: string | null
