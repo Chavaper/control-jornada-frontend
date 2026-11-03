@@ -3,7 +3,8 @@ const ROOTS = {
   JUSTIFICATION_TYPE: '/justification-type',
   REGISTER: '/register',
   CONTRACT_TYPE: '/contract-type',
-  COUNTRY: '/country'
+  COUNTRY: '/country',
+  CITY: '/city'
 }
 
 export const paths = {
@@ -33,8 +34,7 @@ export const paths = {
     root: `${ROOTS.CONTRACT_TYPE}/list`,
     list: `${ROOTS.CONTRACT_TYPE}/list`,
     add: `${ROOTS.CONTRACT_TYPE}/add`,
-    edit: (id: string | number) =>
-      `${ROOTS.CONTRACT_TYPE}/add/${id}`
+    edit: (id: string | number) => `${ROOTS.CONTRACT_TYPE}/add/${id}`
   },
 
   country: {
@@ -42,5 +42,12 @@ export const paths = {
     list: `${ROOTS.COUNTRY}/list`,
     add: `${ROOTS.COUNTRY}/add`,
     edit: (id: string | number) => `${ROOTS.COUNTRY}/add/${id}`
+  },
+
+  city: {
+    root: `${ROOTS.CITY}/list`,
+    list: `${ROOTS.CITY}/list`,
+    add: `${ROOTS.CITY}/add`,
+    edit: (id: string | number) => `${ROOTS.CITY}/add/${id}`
   }
 }
