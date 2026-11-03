@@ -1,5 +1,6 @@
-import TaskIcon from '@mui/icons-material/TaskAltOutlined'
 import DescriptionIcon from '@mui/icons-material/DescriptionOutlined'
+import LocationCityIcon from '@mui/icons-material/LocationCityOutlined'
+import TaskIcon from '@mui/icons-material/TaskAltOutlined'
 
 import { paths } from '@/routes/paths'
 
@@ -23,8 +24,9 @@ export const navData: NavGroup[] = [
         title: 'Tipos de contrato',
         path: paths.contractType.root,
         icon: <DescriptionIcon />
-      }
-      { title: 'Países', path: paths.country.root, icon: <TaskIcon /> }
+      },
+      { title: 'Países', path: paths.country.root, icon: <TaskIcon /> },
+      { title: 'Ciudades', path: paths.city.root, icon: <LocationCityIcon /> }
     ]
   }
 ]
