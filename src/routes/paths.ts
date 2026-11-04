@@ -4,7 +4,11 @@ const ROOTS = {
   REGISTER: '/register',
   CONTRACT_TYPE: '/contract-type',
   COUNTRY: '/country',
-  CITY: '/city'
+  REGION: '/region',
+  JUSTIFICATION: '/justification',
+  CITY: '/city',
+  COMMUNE: '/commune',
+  COMPANY: '/company'
 }
 
 export const paths = {
@@ -43,11 +47,37 @@ export const paths = {
     add: `${ROOTS.COUNTRY}/add`,
     edit: (id: string | number) => `${ROOTS.COUNTRY}/add/${id}`
   },
+  region: {
+    root: `${ROOTS.REGION}/list`,
+    list: `${ROOTS.REGION}/list`,
+    add: `${ROOTS.REGION}/add`,
+    edit: (id: string | number) => `${ROOTS.REGION}/add/${id}`
+  },
+  justification: {
+    root: `${ROOTS.JUSTIFICATION}/list`,
+    list: `${ROOTS.JUSTIFICATION}/list`,
+    add: `${ROOTS.JUSTIFICATION}/add`,
+    edit: (id: string | number) => `${ROOTS.JUSTIFICATION}/add/${id}`
+  },
 
   city: {
     root: `${ROOTS.CITY}/list`,
     list: `${ROOTS.CITY}/list`,
     add: `${ROOTS.CITY}/add`,
     edit: (id: string | number) => `${ROOTS.CITY}/add/${id}`
+  },
+
+  commune: {
+    root: `${ROOTS.COMMUNE}/list`,
+    list: `${ROOTS.COMMUNE}/list`,
+    add: `${ROOTS.COMMUNE}/add`,
+    edit: (id: string | number) => `${ROOTS.COMMUNE}/add/${id}`
+  },
+
+  company: {
+    root: `${ROOTS.COMPANY}/list`,
+    list: `${ROOTS.COMPANY}/list`,
+    add: `${ROOTS.COMPANY}/add`,
+    edit: (id: string | number) => `${ROOTS.COMPANY}/add/${id}`
   }
 }
