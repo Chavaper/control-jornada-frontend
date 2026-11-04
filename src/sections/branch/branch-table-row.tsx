@@ -24,8 +24,8 @@ export default function BranchTableRow({ row, onEditRow, onDeleteRow }: Props) {
     <TableRow hover>
       <TableCell>{row.id}</TableCell>
       <TableCell>{row.name}</TableCell>
-      <TableCell>{row.companyName || 'Sin Información'}</TableCell>
-      <TableCell>{row.communeName || 'Sin Información'}</TableCell>
+      <TableCell>{row.company?.name || 'Sin Información'}</TableCell>
+      <TableCell>{row.commune?.name || 'Sin Información'}</TableCell>
       <TableCell>{row.address}</TableCell>
       <TableCell>{row.phone || 'Sin Información'}</TableCell>
       <TableCell>{row.alias || 'Sin Información'}</TableCell>

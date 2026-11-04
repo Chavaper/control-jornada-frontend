@@ -15,6 +15,7 @@ import { useSnackbar } from '@/components/snackbar'
 import { getErrorMessage } from '@/helpers/API'
   import { allCompanies, allCommunes, branchById, createBranch, updateBranch } from '@/services/rest'
 import { CompanyOption, CommuneOption } from '@/model'
+import { BranchRequest } from '@/model'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
@@ -58,8 +59,8 @@ export default function BranchNewEditForm({ branchId, onSuccess, onCancel }: Pro
       try {
         const branch = await branchById(branchId)
         reset({
-          companyId: branch.companyId,
-          communeId: branch.communeId,
+          companyId: branch.company.id,
+          communeId: branch.commune.id,
           name: branch.name,
           address: branch.address,
           phone: branch.phone ?? '',
@@ -78,10 +79,19 @@ export default function BranchNewEditForm({ branchId, onSuccess, onCancel }: Pro
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      const request: BranchRequest = {
+        company: { id: data.companyId },
+        commune: { id: data.communeId },
+        name: data.name,
+        address: data.address,
+        phone: data.phone,
+        alias: data.alias,
+        active: data.active
+      }
       if (branchId) {
-        await updateBranch(branchId, data)
+        await updateBranch(branchId, request)
       } else {
-        await createBranch(data)
+        await createBranch(request)
       }
       enqueueSnackbar(branchId ? 'Sucursal actualizada' : 'Sucursal creada')
       if (onSuccess) onSuccess()

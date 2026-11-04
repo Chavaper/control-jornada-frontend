@@ -5,8 +5,8 @@ import { TableHeadItem } from '@/components/table'
 export const TABLE_HEAD: TableHeadItem[] = [
   { id: 'id', label: '#', width: 70 },
   { id: 'name', label: 'Nombre' },
-  { id: 'companyName', label: 'Empresa' },
-  { id: 'communeName', label: 'Comuna' },
+  { id: 'company', label: 'Empresa', sortable: false },
+  { id: 'commune', label: 'Comuna', sortable: false },
   { id: 'address', label: 'Dirección' },
   { id: 'phone', label: 'Teléfono' },
   { id: 'alias', label: 'Alias' },

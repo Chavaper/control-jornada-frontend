@@ -1,10 +1,20 @@
+import { CompanyOption } from './branch.model'
+
 export interface JobTypeModel {
   id: number
   name: string
-  companyId: number
-  branchId: number
-  companyName?: string | null
-  branchName?: string | null
+  company: CompanyOption
+  branch: BranchOption
 }
 
-export type JobTypeRequest = Omit<JobTypeModel, 'id'>
+export interface BranchOption {
+  id: number
+  name: string
+  company?: Pick<CompanyOption, 'id'>
+}
+
+export interface JobTypeRequest {
+  name: string
+  company: Pick<CompanyOption, 'id'>
+  branch: Pick<BranchOption, 'id'>
+}

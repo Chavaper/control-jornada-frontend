@@ -14,7 +14,7 @@ import FormProvider, { RHFTextField } from '@/components/hook-form'
 import { useSnackbar } from '@/components/snackbar'
 import { getErrorMessage } from '@/helpers/API'
   import { allBranches, allCompanies, createJobType, jobTypeById, updateJobType } from '@/services/rest'
-import { BranchModel, CompanyOption } from '@/model'
+import { BranchOption, CompanyOption, JobTypeRequest } from '@/model'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
@@ -29,7 +29,7 @@ export default function JobTypeNewEditForm({ jobTypeId, onSuccess, onCancel }: P
   const [loading, setLoading] = useState(Boolean(jobTypeId))
   const [optionsLoading, setOptionsLoading] = useState(true)
   const [companies, setCompanies] = useState<CompanyOption[]>([])
-  const [branches, setBranches] = useState<BranchModel[]>([])
+  const [branches, setBranches] = useState<BranchOption[]>([])
   const [selectedCompanyId, setSelectedCompanyId] = useState(0)
 
   const methods = useForm<JobTypeFormValues>({ resolver: yupResolver(JobTypeSchema), defaultValues: JOB_TYPE_DEFAULT_VALUES })
@@ -45,17 +45,29 @@ export default function JobTypeNewEditForm({ jobTypeId, onSuccess, onCancel }: P
   useEffect(() => {
     if (!jobTypeId) return
     jobTypeById(jobTypeId)
-      .then((jobType) => { setSelectedCompanyId(jobType.companyId); reset(jobType) })
+      .then((jobType) => {
+        setSelectedCompanyId(jobType.company.id)
+        reset({
+          name: jobType.name,
+          companyId: jobType.company.id,
+          branchId: jobType.branch.id
+        })
+      })
       .catch((error) => { enqueueSnackbar(getErrorMessage(error), { variant: 'error' }); router.push(paths.jobType.list) })
       .finally(() => setLoading(false))
   }, [jobTypeId, reset, enqueueSnackbar, router])
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      const request: JobTypeRequest = {
+        name: data.name,
+        company: { id: data.companyId },
+        branch: { id: data.branchId }
+      }
       if (jobTypeId) {
-        await updateJobType(jobTypeId, data)
+        await updateJobType(jobTypeId, request)
       } else {
-        await createJobType(data)
+        await createJobType(request)
       }
       enqueueSnackbar(jobTypeId ? 'Tipo de trabajo actualizado' : 'Tipo de trabajo creado')
       if (onSuccess) onSuccess()
@@ -65,7 +77,7 @@ export default function JobTypeNewEditForm({ jobTypeId, onSuccess, onCancel }: P
 
   if (loading || optionsLoading) return <Stack alignItems="center" sx={{ py: 8 }}><CircularProgress /></Stack>
 
-  const availableBranches = branches.filter((branch) => branch.companyId === selectedCompanyId)
+  const availableBranches = branches.filter((branch) => branch.company?.id === selectedCompanyId)
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>

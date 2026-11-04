@@ -58,7 +58,7 @@ export default function JobTypeListView() {
     <CustomBreadcrumbs heading="Tipos de trabajo" links={[{ name: 'Tipos de trabajo', href: paths.jobType.list }, { name: 'Lista' }]} action={<Button onClick={() => setOpenCreate(true)} variant="contained" startIcon={<AddIcon />}>Agregar</Button>} sx={{ mb: 3 }} />
     <Card><TableContainer><Table><TableHeadCustom headLabel={TABLE_HEAD} order={table.order} orderBy={table.orderBy} onSort={table.onSort} /><TableBody>
       {loading && <TableLoading colSpan={TABLE_HEAD.length} />}
-      {!loading && dataInPage.map((row) => <JobTypeTableRow key={row.id} row={row} companyName={row.companyName ?? 'Empresa no disponible'} branchName={row.branchName ?? 'Sucursal no disponible'} onEditRow={() => setEditId(String(row.id))} onDeleteRow={() => remove(row.id)} />)}
+      {!loading && dataInPage.map((row) => <JobTypeTableRow key={row.id} row={row} companyName={row.company?.name ?? 'Empresa no disponible'} branchName={row.branch?.name ?? 'Sucursal no disponible'} onEditRow={() => setEditId(String(row.id))} onDeleteRow={() => remove(row.id)} />)}
       {!loading && !dataFiltered.length && <TableNoData colSpan={TABLE_HEAD.length} />}
     </TableBody></Table></TableContainer><TablePaginationCustom count={dataFiltered.length} page={table.page} rowsPerPage={table.rowsPerPage} onPageChange={table.onChangePage} onRowsPerPageChange={table.onChangeRowsPerPage} /></Card>
     <Dialog open={openCreate} onClose={() => setOpenCreate(false)} fullWidth maxWidth="md">

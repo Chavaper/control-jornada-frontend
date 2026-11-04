@@ -1,9 +1,7 @@
 export interface BranchModel {
   id: number
-  companyId: number
-  communeId: number
-  companyName?: string | null
-  communeName?: string | null
+  company: CompanyOption
+  commune: CommuneOption
   name: string
   address: string
   phone?: string | null
@@ -21,4 +19,12 @@ export interface CommuneOption {
   name: string
 }
 
-export type BranchRequest = Omit<BranchModel, 'id'>
+export interface BranchRequest {
+  company: Pick<CompanyOption, 'id'>
+  commune: Pick<CommuneOption, 'id'>
+  name: string
+  address: string
+  phone?: string
+  alias?: string
+  active?: boolean
+}
