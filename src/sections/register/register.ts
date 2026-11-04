@@ -32,7 +32,20 @@ export const RegisterSchema = Yup.object({
 
   day: Yup.string().required('La fecha es obligatoria'),
 
-  justificationId: Yup.string().default('')
+  justificationId: Yup.string().default(''),
+
+  hasJustification: Yup.boolean().required(),
+
+  justificationTypeId: Yup.number().nullable().when('hasJustification', {
+    is: true,
+    then: (schema) =>
+    schema.required('Selecciona un tipo de justificación'),
+    otherwise: (schema) => schema.notRequired()
+  }),
+
+    justificationComments: Yup.string()
+    .max(200, 'Máximo 200 caracteres')
+    .default(''),
 })
 
 export type RegisterFormValues = Yup.InferType<typeof RegisterSchema>
@@ -45,5 +58,8 @@ export const REGISTER_DEFAULT_VALUES: RegisterFormValues = {
   breakTime: '',
   backToWork: '',
   day: '',
-  justificationId: ''
+  justificationId: '',
+  hasJustification: false,
+  justificationTypeId: null,
+  justificationComments: '',
 }
