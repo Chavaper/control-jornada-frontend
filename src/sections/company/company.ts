@@ -7,14 +7,14 @@ export const TABLE_HEAD: TableHeadItem[] = [
   { id: 'code', label: 'Código' },
   { id: 'name', label: 'Nombre' },
   { id: 'address', label: 'Dirección', sortable: false },
-  { id: 'communeId', label: 'Comuna', width: 110 },
+  { id: 'commune', label: 'Comuna', sortable: false },
   { id: '', width: 110, align: 'right' }
 ]
 
 export const CompanySchema = Yup.object({
   communeId: Yup.number()
-    .typeError('La comuna debe ser un número')
-    .required('La comuna es obligatoria'),
+    .typeError('Selecciona una comuna')
+    .required('Selecciona una comuna'),
   code: Yup.string()
     .trim()
     .required('El código es obligatorio')

@@ -1,6 +1,9 @@
 export interface CompanyModel {
   id: number
-  communeId: number
+  commune: {
+    id: number
+    name: string
+  }
   code: string
   name: string
   address: string
@@ -13,4 +16,8 @@ export interface CompanyModel {
   lag: boolean
 }
 
-export type CompanyRequest = Omit<CompanyModel, 'id'>
+export type CompanyRequest = Omit<CompanyModel, 'id' | 'commune'> & {
+  commune: {
+    id: number
+  }
+}

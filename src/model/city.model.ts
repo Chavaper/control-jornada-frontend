@@ -1,7 +1,15 @@
 export interface CityModel {
   id: number
   name: string
-  regionId: number
+  region: {
+    id: number
+    name: string
+  }
 }
 
-export type CityRequest = Omit<CityModel, 'id'>
+export interface CityRequest {
+  name: string
+  region: {
+    id: number
+  }
+}
