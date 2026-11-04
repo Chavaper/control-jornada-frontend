@@ -1,3 +1,4 @@
+
 const ROOTS = {
   TASK: '/task',
   REGISTER: '/register',
@@ -6,14 +7,11 @@ const ROOTS = {
   REGION: '/region',
   JUSTIFICATION: '/justification',
   CITY: '/city',
-<<<<<<< feature/crud-register
   JUSTIFICATION_TYPE: '/justification-type',
-  COMMUNE: '/commune'
-=======
   COMMUNE: '/commune',
   COMPANY: '/company'
->>>>>>> main
 }
+
 
 export const paths = {
   home: '/',
