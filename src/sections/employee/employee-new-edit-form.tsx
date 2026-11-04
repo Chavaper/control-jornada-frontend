@@ -19,7 +19,17 @@ import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
 
-import { EmployeeRequest, RefModel } from '@/model/employee.model'
+import {
+  BranchModel,
+  CommuneModel,
+  ContractTypeModel,
+  CountryModel,
+  EmployeeRequest,
+  GenderModel,
+  JobSchedulerModel,
+  JobTypeModel,
+  MaritalStatusModel
+} from '@/model'
 import {
   employeeById,
   saveEmployee,
@@ -42,14 +52,14 @@ interface Props {
 }
 
 interface Catalogs {
-  genders: RefModel[]
-  maritalStatus: RefModel[]
-  contractTypes: RefModel[]
-  jobTypes: RefModel[]
-  countries: RefModel[]
-  branches: RefModel[]
-  communes: RefModel[]
-  jobSchedulers: RefModel[]
+  genders: GenderModel[]
+  maritalStatus: MaritalStatusModel[]
+  contractTypes: ContractTypeModel[]
+  jobTypes: JobTypeModel[]
+  countries: CountryModel[]
+  branches: BranchModel[]
+  communes: Pick<CommuneModel, 'id' | 'name'>[]
+  jobSchedulers: JobSchedulerModel[]
 }
 
 export default function EmployeeNewEditForm({ employeeId }: Props) {
@@ -70,20 +80,19 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
     formState: { isSubmitting }
   } = methods
 
-  // Carga catalogos (y el empleado si es edicion) en paralelo.
-  // Aqui es donde luego pondras tus services reales con Promise.all.
   useEffect(() => {
     const load = async () => {
       try {
-        const [genders,maritalStatus,contractTypes,jobTypes,
-          countries,branches,communes,jobSchedulers] = 
+        const [genders, maritalStatus, contractTypes, jobTypes,
+          countries, branches, communes, jobSchedulers] =
           await Promise.all([
-          mockGenders(),mockMaritalStatus(),mockContractTypes(),mockJobTypes(),
-          mockCountries(),mockBranches(),mockCommunes(),mockJobSchedulers()
-        ])
+            mockGenders(), mockMaritalStatus(), mockContractTypes(), mockJobTypes(),
+            mockCountries(), mockBranches(), mockCommunes(), mockJobSchedulers()
+          ])
 
-        setCatalogs({genders,maritalStatus,contractTypes,
-          jobTypes,countries,branches,communes,jobSchedulers
+        setCatalogs({
+          genders, maritalStatus, contractTypes,
+          jobTypes, countries, branches, communes, jobSchedulers
         })
 
         if (employeeId) {
@@ -91,8 +100,8 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
           reset({
             code: employee.code ?? '',
             name: employee.name ?? '',
-            last_name: employee.last_name ?? '',
-            mother_last_name: employee.mother_last_name ?? '',
+            lastName: employee.lastName ?? '',
+            motherLastName: employee.motherLastName ?? '',
             branch: employee.branch ?? null,
             jobScheduler: employee.jobScheduler ?? null,
             commune: employee.commune ?? null,
@@ -116,12 +125,11 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      // arma el payload que el backend espera (FK como { id })
       const payload: EmployeeRequest = {
         code: data.code,
         name: data.name,
-        last_name: data.last_name,
-        mother_last_name: data.mother_last_name || undefined,
+        lastName: data.lastName,
+        motherLastName: data.motherLastName || undefined,
         branch: data.branch ? { id: data.branch.id } : undefined,
         jobScheduler: data.jobScheduler ? { id: data.jobScheduler.id } : undefined,
         commune: data.commune ? { id: data.commune.id } : undefined,
@@ -153,9 +161,13 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
     )
   }
 
-  // helper: dropdown de una FK con pocas opciones
-  const renderSelect = (name: keyof EmployeeFormValues,label: string,
-    options: RefModel[],required = false) => (
+  // dropdown de una FK con pocas opciones (genérico: acepta cualquier modelo con id/name)
+  const renderSelect = <T extends { id: number; name: string }>(
+    name: keyof EmployeeFormValues,
+    label: string,
+    options: T[],
+    required = false
+  ) => (
     <Controller
       name={name}
       control={control}
@@ -167,7 +179,7 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
           required={required}
           error={!!fieldState.error}
           helperText={fieldState.error?.message}
-          value={(field.value as RefModel | null)?.id ?? ''}
+          value={(field.value as { id: number } | null)?.id ?? ''}
           onChange={(e) => {
             const opt = options.find((o) => o.id === Number(e.target.value)) ?? null
             field.onChange(opt)
@@ -183,9 +195,14 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
     />
   )
 
-  // helper: campo con modal de busqueda para una FK con muchas opciones
-  const renderModalField = (name: keyof EmployeeFormValues,label: string,
-    modalTitle: string,options: RefModel[],required = false) => (
+  // campo con modal de búsqueda para una FK con muchas opciones
+  const renderModalField = <T extends { id: number; name: string }>(
+    name: keyof EmployeeFormValues,
+    label: string,
+    modalTitle: string,
+    options: T[],
+    required = false
+  ) => (
     <Controller
       name={name}
       control={control}
@@ -194,9 +211,9 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
           label={label}
           modalTitle={modalTitle}
           options={options}
-          value={(field.value as RefModel | null) ?? undefined}
+          value={(field.value as { id: number; name?: string } | null) ?? undefined}
           required={required}
-          onChange={(opt: RefModel) => field.onChange(opt)}
+          onChange={(opt) => field.onChange(opt)}
         />
       )}
     />
@@ -206,36 +223,34 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Card sx={{ p: 3 }}>
         <Stack spacing={3}>
-          {/* ---------- Datos personales ---------- */}
           <Typography variant="subtitle2" color="text.secondary">
             Datos personales
           </Typography>
 
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <RHFTextField name="code" label="Codigo" required />
+              <RHFTextField name="code" label="Código" required />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
               <RHFTextField name="name" label="Nombre" required />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <RHFTextField name="last_name" label="Apellido paterno" required />
+              <RHFTextField name="lastName" label="Apellido paterno" required />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <RHFTextField name="mother_last_name" label="Apellido materno" />
+              <RHFTextField name="motherLastName" label="Apellido materno" />
             </Grid>
           </Grid>
 
           <Divider />
 
-          {/* ---------- Clasificacion (dropdowns: pocas opciones) ---------- */}
           <Typography variant="subtitle2" color="text.secondary">
-            Clasificacion
+            Clasificación
           </Typography>
 
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, sm: 6 }}>
-              {renderSelect('gender', 'Genero', catalogs.genders, true)}
+              {renderSelect('gender', 'Género', catalogs.genders, true)}
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
               {renderSelect('maritalStatus', 'Estado civil', catalogs.maritalStatus, true)}
@@ -250,20 +265,13 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
 
           <Divider />
 
-          {/* ---------- Relaciones grandes (modal de busqueda) ---------- */}
           <Typography variant="subtitle2" color="text.secondary">
-            Ubicacion y asignacion
+            Ubicación y asignación
           </Typography>
 
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, sm: 6 }}>
-              {renderModalField(
-                'country',
-                'Nacionalidad',
-                'Seleccionar nacionalidad',
-                catalogs.countries,
-                true
-              )}
+              {renderModalField('country', 'Nacionalidad', 'Seleccionar nacionalidad', catalogs.countries, true)}
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
               {renderModalField('branch', 'Sede', 'Seleccionar sede', catalogs.branches, true)}
@@ -272,13 +280,7 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
               {renderModalField('commune', 'Comuna', 'Seleccionar comuna', catalogs.communes, true)}
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              {renderModalField(
-                'jobScheduler',
-                'Horario',
-                'Seleccionar horario',
-                catalogs.jobSchedulers,
-                true
-              )}
+              {renderModalField('jobScheduler', 'Horario', 'Seleccionar horario', catalogs.jobSchedulers, true)}
             </Grid>
           </Grid>
 

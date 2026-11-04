@@ -21,7 +21,7 @@ export const navData: NavGroup[] = [
   {
     subheader: 'Opciones',
     items: [
-      { title: 'Tareas', path: paths.task.root, icon: <TaskIcon /> },
+//      { title: 'Tareas', path: paths.task.root, icon: <TaskIcon /> },
       {
         title: 'Tipo de justificación',
         path: paths.justificationType.root,

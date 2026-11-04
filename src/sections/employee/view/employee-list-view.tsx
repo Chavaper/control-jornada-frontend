@@ -166,7 +166,7 @@ function applyFilter({
       (e) =>
         !searchText ||
         includesText(e.name, searchText) ||
-        includesText(e.last_name, searchText) ||
+        includesText(e.lastName, searchText) ||
         includesText(e.code, searchText)
     )
     .sort(getComparator<EmployeeModel>(order, orderBy))

@@ -1,5 +1,15 @@
-import { EmployeeModel, EmployeeRequest, RefModel } from '@/model/employee.model'
-
+import {
+  BranchModel,
+  CommuneModel,
+  ContractTypeModel,
+  CountryModel,
+  EmployeeModel,
+  EmployeeRequest,
+  GenderModel,
+  JobSchedulerModel,
+  JobTypeModel,
+  MaritalStatusModel
+} from '@/model'
 // ============================================================
 // SERVICIO DE EMPLEADOS — con datos simulados (mock)
 // ============================================================
@@ -18,70 +28,22 @@ import { EmployeeModel, EmployeeRequest, RefModel } from '@/model/employee.model
 const delay = (ms = 300) => new Promise((r) => setTimeout(r, ms))
 
 const MOCK_EMPLOYEES: EmployeeModel[] = [
-  {
-    id: 1,
-    uud: '74125896',
-    code: 'EMP001',
-    name: 'Pedro',
-    last_name: 'Perez',
-    mother_last_name: 'Garcia',
-    country: { id: 1, name: 'Peru' },
-    gender: { id: 1, name: 'Masculino' },
-    maritalStatus: { id: 1, name: 'Casado' },
-    contractType: { id: 1, name: 'Indefinido' },
-    jobType: { id: 1, name: 'Operario' },
-    branch: { id: 1, name: 'Sede Central' },
-    commune: { id: 1, name: 'Lima' },
-    jobScheduler: { id: 1, name: 'Turno manana' }
-  },
-  {
-    id: 2,
-    uud: '85236941',
-    code: 'EMP002',
-    name: 'Juan',
-    last_name: 'Gutierrez',
-    mother_last_name: 'Lopez',
-    country: { id: 1, name: 'Peru' },
-    gender: { id: 1, name: 'Masculino' },
-    maritalStatus: { id: 4, name: 'Soltero' },
-    contractType: { id: 2, name: 'Plazo fijo' },
-    jobType: { id: 2, name: 'Administrativo' },
-    branch: { id: 1, name: 'Sede Central' },
-    commune: { id: 2, name: 'San Isidro' },
-    jobScheduler: { id: 2, name: 'Turno tarde' }
-  },
-  {
-    id: 3,
-    uud: '87931250',
-    code: 'EMP003',
-    name: 'Max',
-    last_name: 'Ruiz',
-    mother_last_name: 'Limaco',
-    country: { id: 2, name: 'Chile' },
-    gender: { id: 1, name: 'Masculino' },
-    maritalStatus: { id: 2, name: 'Viudo' },
-    contractType: { id: 1, name: 'Indefinido' },
-    jobType: { id: 1, name: 'Operario' },
-    branch: { id: 2, name: 'Sede Norte' },
-    commune: { id: 1, name: 'Lima' },
-    jobScheduler: { id: 1, name: 'Turno manana' }
-  },
-  {
-    id: 4,
-    uud: '15936920',
-    code: 'EMP004',
-    name: 'Sully',
-    last_name: 'Arbeloa',
-    mother_last_name: 'Flores',
-    country: { id: 1, name: 'Peru' },
-    gender: { id: 2, name: 'Femenino' },
-    maritalStatus: { id: 3, name: 'Divorciado' },
-    contractType: { id: 2, name: 'Plazo fijo' },
-    jobType: { id: 2, name: 'Administrativo' },
-    branch: { id: 1, name: 'Sede Central' },
-    commune: { id: 3, name: 'Miraflores' },
-    jobScheduler: { id: 2, name: 'Turno tarde' }
-  }
+{
+  id: 1,
+  uuid: '74125896',
+  code: 'EMP001',
+  name: 'Pedro',
+  lastName: 'Perez',
+  motherLastName: 'Garcia',
+  country: { id: 1, name: 'Peru', nationality: 'Peruana' },
+  gender: { id: 1, name: 'Masculino' },
+  maritalStatus: { id: 1, name: 'Casado' },
+  contractType: { id: 1, name: 'Indefinido' },
+  jobType: { id: 1, name: 'Operario' },
+  branch: { id: 1, name: 'Sede Central' },
+  commune: { id: 1, name: 'Lima' },
+  jobScheduler: { id: 1, name: 'Turno manana' }
+},
 ]
 
 // copia mutable en memoria para simular el CRUD
@@ -102,7 +64,7 @@ export const employeeById = async (id: string | number): Promise<EmployeeModel> 
 export const saveEmployee = async (employee: EmployeeRequest): Promise<EmployeeModel> => {
   await delay()
   const nextId = store.length ? Math.max(...store.map((e) => e.id)) + 1 : 1
-  const created: EmployeeModel = { ...(employee as EmployeeModel), id: nextId }
+  const created = { ...employee, id: nextId } as unknown as EmployeeModel
   store.push(created)
   return created
 }
@@ -135,7 +97,7 @@ export const deleteEmployee = async (id: string | number): Promise<void> => {
 //   ])
 // ============================================================
 
-export const mockGenders = async (): Promise<RefModel[]> => {
+export const mockGenders = async (): Promise<GenderModel[]> => {
   await delay(150)
   return [
     { id: 1, name: 'Masculino' },
@@ -143,7 +105,7 @@ export const mockGenders = async (): Promise<RefModel[]> => {
   ]
 }
 
-export const mockMaritalStatus = async (): Promise<RefModel[]> => {
+export const mockMaritalStatus = async (): Promise<MaritalStatusModel[]> => {
   await delay(150)
   return [
     { id: 1, name: 'Casado' },
@@ -153,7 +115,7 @@ export const mockMaritalStatus = async (): Promise<RefModel[]> => {
   ]
 }
 
-export const mockContractTypes = async (): Promise<RefModel[]> => {
+export const mockContractTypes = async (): Promise<ContractTypeModel[]> => {
   await delay(150)
   return [
     { id: 1, name: 'Indefinido' },
@@ -162,7 +124,7 @@ export const mockContractTypes = async (): Promise<RefModel[]> => {
   ]
 }
 
-export const mockJobTypes = async (): Promise<RefModel[]> => {
+export const mockJobTypes = async (): Promise<JobTypeModel[]> => {
   await delay(150)
   return [
     { id: 1, name: 'Operario' },
@@ -172,23 +134,17 @@ export const mockJobTypes = async (): Promise<RefModel[]> => {
 }
 
 // Catalogos grandes -> se usan con modal de busqueda
-export const mockCountries = async (): Promise<RefModel[]> => {
+export const mockCountries = async (): Promise<CountryModel[]> => {
   await delay(150)
   return [
-    { id: 1, name: 'Peru' },
-    { id: 2, name: 'Chile' },
-    { id: 3, name: 'Argentina' },
-    { id: 4, name: 'Colombia' },
-    { id: 5, name: 'Ecuador' },
-    { id: 6, name: 'Bolivia' },
-    { id: 7, name: 'Brasil' },
-    { id: 8, name: 'Mexico' },
-    { id: 9, name: 'Espana' },
-    { id: 10, name: 'Estados Unidos' }
+    { id: 1, name: 'Peru', nationality: 'Peruana' },
+    { id: 2, name: 'Chile', nationality: 'Chilena' },
+    { id: 3, name: 'Argentina', nationality: 'Argentina' }
+    // ...el resto, agregando nationality a cada uno
   ]
 }
 
-export const mockBranches = async (): Promise<RefModel[]> => {
+export const mockBranches = async (): Promise<BranchModel[]> => {
   await delay(150)
   return [
     { id: 1, name: 'Sede Central' },
@@ -198,7 +154,7 @@ export const mockBranches = async (): Promise<RefModel[]> => {
   ]
 }
 
-export const mockCommunes = async (): Promise<RefModel[]> => {
+export const mockCommunes = async (): Promise<Pick<CommuneModel, 'id' | 'name'>[]> => {
   await delay(150)
   return [
     { id: 1, name: 'Lima' },
@@ -210,7 +166,7 @@ export const mockCommunes = async (): Promise<RefModel[]> => {
   ]
 }
 
-export const mockJobSchedulers = async (): Promise<RefModel[]> => {
+export const mockJobSchedulers = async (): Promise<JobSchedulerModel[]> => {
   await delay(150)
   return [
     { id: 1, name: 'Turno manana' },

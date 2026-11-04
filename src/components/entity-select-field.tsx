@@ -6,23 +6,21 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 
-import { RefModel } from '@/model/employee.model'
-
 import EntitySelectModal from './entity-select-modal'
 
-interface Props {
+interface Props<T extends { id: number; name?: string }> {
   label: string
   modalTitle: string
-  options: RefModel[]
-  value?: RefModel
+  options: T[]
+  value?: T
   required?: boolean
-  getSubtitle?: (option: RefModel) => string
-  onChange: (option: RefModel) => void
+  getSubtitle?: (option: T) => string
+  onChange: (option: T) => void
 }
 
 // Campo tipo "caja con boton Cambiar" que abre el modal de seleccion.
 // Usalo para FK con muchas opciones (nacionalidad, sede, comuna...).
-export default function EntitySelectField({
+export default function EntitySelectField<T extends { id: number; name?: string }>({
   label,
   modalTitle,
   options,
@@ -30,7 +28,7 @@ export default function EntitySelectField({
   required,
   getSubtitle,
   onChange
-}: Props) {
+}: Props<T>) {
   const [open, setOpen] = useState(false)
 
   return (

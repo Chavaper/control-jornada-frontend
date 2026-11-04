@@ -25,7 +25,7 @@ export default function EmployeeTableRow({ row, onEditRow, onDeleteRow }: Props)
         <TableCell>{row.code}</TableCell>
         <TableCell>{row.name}</TableCell>
         <TableCell>
-          {row.last_name} {row.mother_last_name ?? ''}
+          {row.lastName} {row.motherLastName ?? ''}
         </TableCell>
         <TableCell>{row.country?.name ?? '-'}</TableCell>
         <TableCell>{row.maritalStatus?.name ?? '-'}</TableCell>
@@ -51,7 +51,7 @@ export default function EmployeeTableRow({ row, onEditRow, onDeleteRow }: Props)
           <>
             Seguro que quieres eliminar al empleado{' '}
             <strong>
-              {row.name} {row.last_name}
+              {row.name} {row.lastName}
             </strong>
             ?
           </>

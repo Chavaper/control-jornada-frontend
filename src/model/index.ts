@@ -2,14 +2,13 @@ export * from './task.model'
 export * from './register.model'
 export * from './contract-type.model'
 export * from './country.model'
-<<<<<<< HEAD
-export * from './employee.model'
-export * from './marital-status.model'
-=======
 export * from './city.model'
-export * from './justification-type.model'
-<<<<<<< HEAD
->>>>>>> upstream/main
-=======
+export * from './region.model'
 export * from './commune.model'
->>>>>>> upstream
+export * from './justification-type.model'
+export * from './marital-status.model'
+export * from './employee.model'
+export * from './branch.model'
+export * from './gender.model'
+export * from './job-type.model'
+export * from './job-scheduler.model'
