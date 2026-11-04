@@ -8,4 +8,8 @@ export * from './marital-status.model'
 =======
 export * from './city.model'
 export * from './justification-type.model'
+<<<<<<< HEAD
 >>>>>>> upstream/main
+=======
+export * from './commune.model'
+>>>>>>> upstream
