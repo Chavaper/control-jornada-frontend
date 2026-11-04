@@ -1,18 +1,23 @@
 import { yupResolver } from '@hookform/resolvers/yup'
+import Autocomplete from '@mui/material/Autocomplete'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import CircularProgress from '@mui/material/CircularProgress'
 import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 
 import FormProvider, { RHFTextField } from '@/components/hook-form'
 import { useSnackbar } from '@/components/snackbar'
 import { getErrorMessage } from '@/helpers/API'
+import { CityRequest } from '@/model'
+import { RegionModel } from '@/model/region.model'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
-import { allCities, cityById, saveCity, updateCity } from '@/services/rest'
+import { cityById, saveCity, updateCity } from '@/services/rest'
+import { allRegions } from '@/services/rest/indexRegion'
 
 import { CITY_DEFAULT_VALUES, CityFormValues, CitySchema } from './city'
 
@@ -24,6 +29,8 @@ export default function CityNewEditForm({ cityId }: Props) {
   const router = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(!!cityId)
+  const [regions, setRegions] = useState<RegionModel[]>([])
+  const [regionsLoading, setRegionsLoading] = useState(true)
 
   const methods = useForm<CityFormValues>({
     resolver: yupResolver(CitySchema),
@@ -32,9 +39,24 @@ export default function CityNewEditForm({ cityId }: Props) {
 
   const {
     reset,
+    control,
     handleSubmit,
     formState: { isSubmitting }
   } = methods
+
+  useEffect(() => {
+    const getRegions = async () => {
+      try {
+        setRegions(await allRegions())
+      } catch (error) {
+        enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
+      } finally {
+        setRegionsLoading(false)
+      }
+    }
+
+    getRegions()
+  }, [enqueueSnackbar])
 
   useEffect(() => {
     if (!cityId) return
@@ -42,7 +64,7 @@ export default function CityNewEditForm({ cityId }: Props) {
     const getCity = async () => {
       try {
         const city = await cityById(cityId)
-        reset({ name: city.name, regionId: city.regionId })
+        reset({ name: city.name, regionId: city.region.id })
       } catch (error) {
         enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
         router.push(paths.city.list)
@@ -55,14 +77,18 @@ export default function CityNewEditForm({ cityId }: Props) {
   }, [cityId, reset, enqueueSnackbar, router])
 
   const onSubmit = handleSubmit(async (data) => {
+    // el back espera la región como objeto
+    const city: CityRequest = {
+      name: data.name,
+      region: { id: data.regionId }
+    }
+
     try {
       if (cityId) {
-        await updateCity(cityId, data)
+        await updateCity(cityId, city)
         enqueueSnackbar('Ciudad actualizada')
       } else {
-        const cities = await allCities()
-        const nextId = Math.max(0, ...cities.map((city) => city.id)) + 1
-        await saveCity({ ...data, id: nextId })
+        await saveCity(city)
         enqueueSnackbar('Ciudad creada')
       }
       router.push(paths.city.list)
@@ -84,11 +110,32 @@ export default function CityNewEditForm({ cityId }: Props) {
       <Card sx={{ p: 3 }}>
         <Stack spacing={3}>
           <RHFTextField name="name" label="Nombre" required />
-          <RHFTextField
+          <Controller
             name="regionId"
-            label="ID de región"
-            type="number"
-            required
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <Autocomplete
+                options={regions}
+                value={
+                  regions.find((region) => region.id === field.value) ?? null
+                }
+                getOptionLabel={(region) => region.name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                onChange={(_, region) => field.onChange(region?.id)}
+                onBlur={field.onBlur}
+                noOptionsText="Sin coincidencias"
+                loading={regionsLoading}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Región *"
+                    placeholder="Selecciona una región"
+                    error={!!error}
+                    helperText={error?.message}
+                  />
+                )}
+              />
+            )}
           />
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">

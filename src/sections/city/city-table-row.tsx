@@ -24,7 +24,7 @@ export default function CityTableRow({ row, onEditRow, onDeleteRow }: Props) {
       <TableRow hover>
         <TableCell>{row.id}</TableCell>
         <TableCell>{row.name}</TableCell>
-        <TableCell>{row.regionId}</TableCell>
+        <TableCell>{row.region.name}</TableCell>
         <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
           <Tooltip title="Editar">
             <IconButton onClick={onEditRow}>
