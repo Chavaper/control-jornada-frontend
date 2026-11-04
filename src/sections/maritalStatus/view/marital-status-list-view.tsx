@@ -28,7 +28,7 @@ import { TABLE_HEAD } from '../marital-status'
 import MaritalStatusTableRow from '../marital-status-table-row'
 import MaritalStatusTableToolbar from '../marital-status-table-toolbar'
 
-import { MaritalStatusModel } from '@/model/marital-status.mode';
+import { MaritalStatusModel } from '@/model/marital-status.model';
 import { allMaritalStatus, deleteMaritalStatus } from '@/services/rest/maritalStatus/maritalStatus';
 
 

@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Tooltip from '@mui/material/Tooltip'
-import { MaritalStatusModel } from '@/model/marital-status.mode';
+import { MaritalStatusModel } from '@/model/marital-status.model';
 import { ConfirmDialog } from '@/components/custom-dialog'
 import { useBoolean } from '@/hooks/use-boolean'
 

@@ -18,7 +18,7 @@ import {
   MaritalStatusSchema
 } from './marital-status'
 import { maritalStatusById, saveMaritalStatus, updateMaritalStatus } from '@/services/rest/maritalStatus/maritalStatus';
-import { MaritalStatusModel } from '@/model/marital-status.mode';
+import { MaritalStatusModel } from '@/model/marital-status.model';
 
 interface Props {
   maritalStatusId?: string

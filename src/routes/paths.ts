@@ -3,7 +3,8 @@ const ROOTS = {
   REGISTER: '/register',
   CONTRACT_TYPE: '/contract-type',
   COUNTRY: '/country',
-  MARITAL_STATUS: '/maritalStatus'
+  MARITAL_STATUS: '/maritalStatus',
+  EMPLOYEE: '/employee'
 }
 
 export const paths = {
@@ -42,5 +43,11 @@ export const paths = {
     list: `${ROOTS.MARITAL_STATUS}/list`,
     add: `${ROOTS.MARITAL_STATUS}/add`,
     edit: (id: string | number) => `${ROOTS.MARITAL_STATUS}/add/${id}`
+  },
+  employee: {
+    root: `${ROOTS.EMPLOYEE}/list`,
+    list: `${ROOTS.EMPLOYEE}/list`,
+    add: `${ROOTS.EMPLOYEE}/add`,
+    edit: (id: string | number) => `${ROOTS.EMPLOYEE}/add/${id}`
   }
 }

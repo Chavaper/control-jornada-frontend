@@ -25,7 +25,8 @@ export const navData: NavGroup[] = [
         icon: <DescriptionIcon />
       },
       { title: 'Países', path: paths.country.root, icon: <TaskIcon /> },
-      { title: 'Estados civiles', path: paths.maritalStatus.root, icon: <TaskIcon /> }
+      { title: 'Estados civiles', path: paths.maritalStatus.root, icon: <TaskIcon /> },
+      { title: 'Empleados', path: paths.employee.root, icon: <TaskIcon /> }
     ]
   }
 ]

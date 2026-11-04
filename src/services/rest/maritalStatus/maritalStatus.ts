@@ -1,5 +1,5 @@
 import { handleResponse, JSON_HEADERS } from '@/helpers/API'
-import { MaritalStatusModel, MaritalStatusRequest } from '@/model/marital-status.mode';
+import { MaritalStatusModel, MaritalStatusRequest } from '@/model/marital-status.model';
 
 const apiUrl = 'http://localhost:8080/v1/template/maritialStatus'
 
