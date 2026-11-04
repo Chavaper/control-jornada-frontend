@@ -1,9 +1,11 @@
+
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined'
+import ApartmentIcon from '@mui/icons-material/Apartment'
+import BusinessIcon from '@mui/icons-material/BusinessOutlined'
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
 import DescriptionIcon from '@mui/icons-material/DescriptionOutlined'
 import LocationCityIcon from '@mui/icons-material/LocationCityOutlined'
 import TaskIcon from '@mui/icons-material/TaskAltOutlined'
-import ApartmentIcon from '@mui/icons-material/Apartment';
 
 import { paths } from '@/routes/paths'
 
@@ -40,7 +42,8 @@ export const navData: NavGroup[] = [
       },
       { title: 'Países', path: paths.country.root, icon: <TaskIcon /> },
       { title: 'Ciudades', path: paths.city.root, icon: <LocationCityIcon /> },
-      { title: 'Comunas', path: paths.commune.root, icon:  <ApartmentIcon/> }
+      { title: 'Comunas', path: paths.commune.root, icon: <ApartmentIcon /> },
+      { title: 'Empresas', path: paths.company.root, icon: <BusinessIcon /> }
     ]
   }
 ]

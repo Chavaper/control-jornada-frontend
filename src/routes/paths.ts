@@ -1,4 +1,3 @@
-
 const ROOTS = {
   TASK: '/task',
   REGISTER: '/register',
@@ -7,8 +6,13 @@ const ROOTS = {
   REGION: '/region',
   JUSTIFICATION: '/justification',
   CITY: '/city',
+<<<<<<< feature/crud-register
   JUSTIFICATION_TYPE: '/justification-type',
   COMMUNE: '/commune'
+=======
+  COMMUNE: '/commune',
+  COMPANY: '/company'
+>>>>>>> main
 }
 
 export const paths = {
@@ -76,5 +80,12 @@ export const paths = {
     list: `${ROOTS.COMMUNE}/list`,
     add: `${ROOTS.COMMUNE}/add`,
     edit: (id: string | number) => `${ROOTS.COMMUNE}/add/${id}`
+  },
+
+  company: {
+    root: `${ROOTS.COMPANY}/list`,
+    list: `${ROOTS.COMPANY}/list`,
+    add: `${ROOTS.COMPANY}/add`,
+    edit: (id: string | number) => `${ROOTS.COMPANY}/add/${id}`
   }
 }
