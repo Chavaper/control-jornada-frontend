@@ -30,7 +30,7 @@ export default function CompanyTableRow({
         <TableCell>{row.code}</TableCell>
         <TableCell>{row.name}</TableCell>
         <TableCell sx={{ color: 'text.secondary' }}>{row.address}</TableCell>
-        <TableCell>{row.communeId}</TableCell>
+        <TableCell>{row.commune.name}</TableCell>
         <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
           <Tooltip title="Editar">
             <IconButton onClick={onEditRow}>

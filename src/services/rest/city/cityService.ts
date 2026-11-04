@@ -13,7 +13,7 @@ export const cityById = async (id: string | number): Promise<CityModel> => {
   return handleResponse<CityModel>(response)
 }
 
-export const saveCity = async (city: CityModel): Promise<CityModel> => {
+export const saveCity = async (city: CityRequest): Promise<CityModel> => {
   const response = await fetch(apiUrl, {
     method: 'POST',
     headers: JSON_HEADERS,
