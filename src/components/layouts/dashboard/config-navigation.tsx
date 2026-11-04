@@ -23,7 +23,7 @@ export const navData: NavGroup[] = [
         title: 'Tipos de contrato',
         path: paths.contractType.root,
         icon: <DescriptionIcon />
-      }
+      },
       { title: 'Países', path: paths.country.root, icon: <TaskIcon /> }
     ]
   }

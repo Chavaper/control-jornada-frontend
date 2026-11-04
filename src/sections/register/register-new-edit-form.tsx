@@ -8,6 +8,9 @@ import Stack from '@mui/material/Stack'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
+import EmployeeSelector from '@/components/employee/employee-selector'
+import { Controller, useFormContext } from 'react-hook-form'
+
 import FormProvider, { RHFTextField } from '@/components/hook-form'
 import { useSnackbar } from '@/components/snackbar'
 import { getErrorMessage } from '@/helpers/API'
@@ -117,12 +120,23 @@ export default function RegisterNewEditForm({ registerId }: Props) {
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Card sx={{ p: 3 }}>
         <Stack spacing={3}>
-          <RHFTextField
+
+            
+          <Controller
             name="employeeId"
-            label="ID del empleado"
-            type="number"
-            required
-          />
+            control={methods.control}
+            render={({ field, fieldState }) => (
+                <EmployeeSelector
+                value={field.value == null ? null : Number(field.value)}
+                onChange={field.onChange}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                />
+            )}
+            />
+
+
+
 
           <RHFTextField
             name="day"
