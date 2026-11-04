@@ -18,6 +18,7 @@ const refSchema = Yup.object({
 })
 
 export const EmployeeSchema = Yup.object({
+  // Datos personales
   code: Yup.string().trim().required('El código es obligatorio').max(20, 'Máximo 20 caracteres'),
   name: Yup.string().trim().required('El nombre es obligatorio').max(200, 'Máximo 200 caracteres'),
   lastName: Yup.string()
@@ -25,12 +26,24 @@ export const EmployeeSchema = Yup.object({
     .required('El apellido paterno es obligatorio')
     .max(200, 'Máximo 200 caracteres'),
   motherLastName: Yup.string().max(200, 'Máximo 200 caracteres').default(''),
+  birthDate: Yup.string().required('La fecha de nacimiento es obligatoria'),
 
+  // Contacto
+  email: Yup.string().trim().email('Correo inválido').required('El correo es obligatorio'),
+  phone: Yup.string().max(20, 'Máximo 20 caracteres').default(''),
+  address: Yup.string().max(255, 'Máximo 255 caracteres').default(''),
+
+  // Contrato
+  contractDate: Yup.string().required('La fecha de contratación es obligatoria'),
+  contractEndDate: Yup.string().nullable().default(null),
+
+  // Clasificación (dropdowns)
   gender: refSchema.required('El género es obligatorio').nullable(),
   maritalStatus: refSchema.required('El estado civil es obligatorio').nullable(),
   jobType: refSchema.required('El tipo de puesto es obligatorio').nullable(),
   contractType: refSchema.nullable().default(null),
 
+  // Relaciones grandes (modal)
   country: refSchema.required('La nacionalidad es obligatoria').nullable(),
   branch: refSchema.required('La sede es obligatoria').nullable(),
   commune: refSchema.required('La comuna es obligatoria').nullable(),
@@ -44,6 +57,12 @@ export const EMPLOYEE_DEFAULT_VALUES: EmployeeFormValues = {
   name: '',
   lastName: '',
   motherLastName: '',
+  birthDate: '',
+  email: '',
+  phone: '',
+  address: '',
+  contractDate: '',
+  contractEndDate: null,
   gender: null,
   maritalStatus: null,
   jobType: null,

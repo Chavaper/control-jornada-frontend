@@ -39,6 +39,12 @@ export interface EmployeeRequest {
   name: string
   lastName: string
   motherLastName?: string
+  birthDate?: string
+  email?: string
+  phone?: string
+  address?: string
+  contractDate?: string
+  contractEndDate?: string | null
   branch?: { id: number }
   jobScheduler?: { id: number }
   commune?: { id: number }
@@ -47,4 +53,5 @@ export interface EmployeeRequest {
   maritalStatus?: { id: number }
   contractType?: { id: number }
   jobType?: { id: number }
+  active?: boolean
 }

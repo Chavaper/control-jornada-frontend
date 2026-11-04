@@ -31,21 +31,21 @@ import {
   MaritalStatusModel
 } from '@/model'
 import {
+  allEmployees,
   employeeById,
   saveEmployee,
   updateEmployee,
   mockGenders,
-  mockMaritalStatus,
-  mockContractTypes,
   mockJobTypes,
-  mockCountries,
   mockBranches,
-  mockCommunes,
   mockJobSchedulers
 } from '@/services/rest/employee/employee'
 
+import { allMaritalStatus } from '@/services/rest/maritalStatus/maritalStatus'
+import { allCountries } from '@/services/rest/country/countryService'
 import EntitySelectField from '@/components/entity-select-field'
 import { EMPLOYEE_DEFAULT_VALUES, EmployeeFormValues, EmployeeSchema } from './employee'
+import { allCommunes, allContractTypes } from '@/services/rest';
 
 interface Props {
   employeeId?: string
@@ -61,6 +61,9 @@ interface Catalogs {
   communes: Pick<CommuneModel, 'id' | 'name'>[]
   jobSchedulers: JobSchedulerModel[]
 }
+
+// para campos de fecha: mantiene la etiqueta arriba
+const dateProps = { slotProps: { inputLabel: { shrink: true } } }
 
 export default function EmployeeNewEditForm({ employeeId }: Props) {
   const router = useRouter()
@@ -86,8 +89,8 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
         const [genders, maritalStatus, contractTypes, jobTypes,
           countries, branches, communes, jobSchedulers] =
           await Promise.all([
-            mockGenders(), mockMaritalStatus(), mockContractTypes(), mockJobTypes(),
-            mockCountries(), mockBranches(), mockCommunes(), mockJobSchedulers()
+            mockGenders(), allMaritalStatus(), allContractTypes(), mockJobTypes(),
+            allCountries(), mockBranches(), allCommunes(), mockJobSchedulers()
           ])
 
         setCatalogs({
@@ -102,6 +105,12 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
             name: employee.name ?? '',
             lastName: employee.lastName ?? '',
             motherLastName: employee.motherLastName ?? '',
+            birthDate: employee.birthDate ?? '',
+            email: employee.email ?? '',
+            phone: employee.phone ?? '',
+            address: employee.address ?? '',
+            contractDate: employee.contractDate ?? '',
+            contractEndDate: employee.contractEndDate ?? null,
             branch: employee.branch ?? null,
             jobScheduler: employee.jobScheduler ?? null,
             commune: employee.commune ?? null,
@@ -130,6 +139,12 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
         name: data.name,
         lastName: data.lastName,
         motherLastName: data.motherLastName || undefined,
+        birthDate: data.birthDate,
+        email: data.email,
+        phone: data.phone || undefined,
+        address: data.address || undefined,
+        contractDate: data.contractDate,
+        contractEndDate: data.contractEndDate || null,
         branch: data.branch ? { id: data.branch.id } : undefined,
         jobScheduler: data.jobScheduler ? { id: data.jobScheduler.id } : undefined,
         commune: data.commune ? { id: data.commune.id } : undefined,
@@ -137,7 +152,8 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
         gender: data.gender ? { id: data.gender.id } : undefined,
         maritalStatus: data.maritalStatus ? { id: data.maritalStatus.id } : undefined,
         contractType: data.contractType ? { id: data.contractType.id } : undefined,
-        jobType: data.jobType ? { id: data.jobType.id } : undefined
+        jobType: data.jobType ? { id: data.jobType.id } : undefined,
+        active: true
       }
 
       if (employeeId) {
@@ -161,7 +177,6 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
     )
   }
 
-  // dropdown de una FK con pocas opciones (genérico: acepta cualquier modelo con id/name)
   const renderSelect = <T extends { id: number; name: string }>(
     name: keyof EmployeeFormValues,
     label: string,
@@ -195,7 +210,6 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
     />
   )
 
-  // campo con modal de búsqueda para una FK con muchas opciones
   const renderModalField = <T extends { id: number; name: string }>(
     name: keyof EmployeeFormValues,
     label: string,
@@ -223,6 +237,7 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Card sx={{ p: 3 }}>
         <Stack spacing={3}>
+          {/* ---------- Datos personales ---------- */}
           <Typography variant="subtitle2" color="text.secondary">
             Datos personales
           </Typography>
@@ -240,10 +255,49 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
             <Grid size={{ xs: 12, sm: 6 }}>
               <RHFTextField name="motherLastName" label="Apellido materno" />
             </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <RHFTextField name="birthDate" label="Fecha de nacimiento" type="date" required {...dateProps} />
+            </Grid>
           </Grid>
 
           <Divider />
 
+          {/* ---------- Contacto ---------- */}
+          <Typography variant="subtitle2" color="text.secondary">
+            Contacto
+          </Typography>
+
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <RHFTextField name="email" label="Correo" required />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <RHFTextField name="phone" label="Teléfono" />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <RHFTextField name="address" label="Dirección" />
+            </Grid>
+          </Grid>
+
+          <Divider />
+
+          {/* ---------- Contrato ---------- */}
+          <Typography variant="subtitle2" color="text.secondary">
+            Contrato
+          </Typography>
+
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <RHFTextField name="contractDate" label="Fecha de contratación" type="date" required {...dateProps} />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <RHFTextField name="contractEndDate" label="Fin de contrato" type="date" {...dateProps} />
+            </Grid>
+          </Grid>
+
+          <Divider />
+
+          {/* ---------- Clasificación ---------- */}
           <Typography variant="subtitle2" color="text.secondary">
             Clasificación
           </Typography>
@@ -265,6 +319,7 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
 
           <Divider />
 
+          {/* ---------- Ubicación y asignación ---------- */}
           <Typography variant="subtitle2" color="text.secondary">
             Ubicación y asignación
           </Typography>
