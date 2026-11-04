@@ -3,6 +3,7 @@ import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
 import DescriptionIcon from '@mui/icons-material/DescriptionOutlined'
 import LocationCityIcon from '@mui/icons-material/LocationCityOutlined'
 import TaskIcon from '@mui/icons-material/TaskAltOutlined'
+import ApartmentIcon from '@mui/icons-material/Apartment';
 
 import { paths } from '@/routes/paths'
 
@@ -38,7 +39,8 @@ export const navData: NavGroup[] = [
         icon: <DescriptionIcon />
       },
       { title: 'Países', path: paths.country.root, icon: <TaskIcon /> },
-      { title: 'Ciudades', path: paths.city.root, icon: <LocationCityIcon /> }
+      { title: 'Ciudades', path: paths.city.root, icon: <LocationCityIcon /> },
+      { title: 'Comunas', path: paths.commune.root, icon:  <ApartmentIcon/> }
     ]
   }
 ]
