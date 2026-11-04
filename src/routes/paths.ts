@@ -4,7 +4,8 @@ const ROOTS = {
   REGISTER: '/register',
   CONTRACT_TYPE: '/contract-type',
   COUNTRY: '/country',
-  CITY: '/city'
+  CITY: '/city',
+  COMMUNE: '/commune'
 }
 
 export const paths = {
@@ -49,5 +50,12 @@ export const paths = {
     list: `${ROOTS.CITY}/list`,
     add: `${ROOTS.CITY}/add`,
     edit: (id: string | number) => `${ROOTS.CITY}/add/${id}`
+  },
+
+  commune: {
+    root: `${ROOTS.COMMUNE}/list`,
+    list: `${ROOTS.COMMUNE}/list`,
+    add: `${ROOTS.COMMUNE}/add`,
+    edit: (id: string | number) => `${ROOTS.COMMUNE}/add/${id}`
   }
 }
