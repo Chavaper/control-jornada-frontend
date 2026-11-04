@@ -1,18 +1,26 @@
 import { yupResolver } from '@hookform/resolvers/yup'
+import Autocomplete from '@mui/material/Autocomplete'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import CircularProgress from '@mui/material/CircularProgress'
 import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 
 import FormProvider, { RHFSwitch, RHFTextField } from '@/components/hook-form'
 import { useSnackbar } from '@/components/snackbar'
 import { getErrorMessage } from '@/helpers/API'
+import { CommuneModel, CompanyRequest } from '@/model'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
-import { companyById, saveCompany, updateCompany } from '@/services/rest'
+import {
+  allCommunes,
+  companyById,
+  saveCompany,
+  updateCompany
+} from '@/services/rest'
 
 import {
   COMPANY_DEFAULT_VALUES,
@@ -28,6 +36,8 @@ export default function CompanyNewEditForm({ companyId }: Props) {
   const router = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(!!companyId)
+  const [communes, setCommunes] = useState<CommuneModel[]>([])
+  const [communesLoading, setCommunesLoading] = useState(true)
 
   const methods = useForm<CompanyFormValues>({
     resolver: yupResolver(CompanySchema),
@@ -36,9 +46,24 @@ export default function CompanyNewEditForm({ companyId }: Props) {
 
   const {
     reset,
+    control,
     handleSubmit,
     formState: { isSubmitting }
   } = methods
+
+  useEffect(() => {
+    const getCommunes = async () => {
+      try {
+        setCommunes(await allCommunes())
+      } catch (error) {
+        enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
+      } finally {
+        setCommunesLoading(false)
+      }
+    }
+
+    getCommunes()
+  }, [enqueueSnackbar])
 
   useEffect(() => {
     if (!companyId) return
@@ -47,7 +72,7 @@ export default function CompanyNewEditForm({ companyId }: Props) {
       try {
         const company = await companyById(companyId)
         reset({
-          communeId: company.communeId,
+          communeId: company.commune.id,
           code: company.code,
           name: company.name,
           address: company.address,
@@ -71,12 +96,16 @@ export default function CompanyNewEditForm({ companyId }: Props) {
   }, [companyId, reset, enqueueSnackbar, router])
 
   const onSubmit = handleSubmit(async (data) => {
+    // el back espera la comuna como objeto
+    const { communeId, ...rest } = data
+    const company: CompanyRequest = { ...rest, commune: { id: communeId } }
+
     try {
       if (companyId) {
-        await updateCompany(companyId, data)
+        await updateCompany(companyId, company)
         enqueueSnackbar('Empresa actualizada')
       } else {
-        await saveCompany(data)
+        await saveCompany(company)
         enqueueSnackbar('Empresa creada')
       }
       router.push(paths.company.list)
@@ -100,11 +129,32 @@ export default function CompanyNewEditForm({ companyId }: Props) {
           <RHFTextField name="code" label="Código" required />
           <RHFTextField name="name" label="Nombre" required />
           <RHFTextField name="address" label="Dirección" required />
-          <RHFTextField
+          <Controller
             name="communeId"
-            label="ID de comuna"
-            type="number"
-            required
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <Autocomplete
+                options={communes}
+                value={
+                  communes.find((commune) => commune.id === field.value) ?? null
+                }
+                getOptionLabel={(commune) => commune.name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                onChange={(_, commune) => field.onChange(commune?.id)}
+                onBlur={field.onBlur}
+                noOptionsText="Sin coincidencias"
+                loading={communesLoading}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Comuna *"
+                    placeholder="Selecciona una comuna"
+                    error={!!error}
+                    helperText={error?.message}
+                  />
+                )}
+              />
+            )}
           />
           <RHFTextField name="phone" label="Teléfono" />
           <RHFTextField name="alias" label="Alias" />

@@ -5,7 +5,7 @@ import { TableHeadItem } from '@/components/table'
 export const TABLE_HEAD: TableHeadItem[] = [
   { id: 'id', label: '#', width: 80 },
   { id: 'name', label: 'Nombre' },
-  { id: 'regionId', label: 'Región' },
+  { id: 'region', label: 'Región', sortable: false },
   { id: '', width: 110, align: 'right' }
 ]
 
@@ -15,8 +15,8 @@ export const CitySchema = Yup.object({
     .required('El nombre es obligatorio')
     .max(200, 'Máximo 200 caracteres'),
   regionId: Yup.number()
-    .typeError('La región debe ser un número')
-    .required('La región es obligatoria')
+    .typeError('Selecciona una región')
+    .required('Selecciona una región')
 })
 
 export type CityFormValues = Yup.InferType<typeof CitySchema>
