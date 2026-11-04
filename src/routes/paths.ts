@@ -7,7 +7,8 @@ const ROOTS = {
   MARITAL_STATUS: '/maritalStatus',
   EMPLOYEE: '/employee',
   CITY: '/city',
-  COMMUNE: '/commune'
+  COMMUNE: '/commune',
+  COMPANY: '/company'
 }
 
 export const paths = {
@@ -70,5 +71,12 @@ export const paths = {
     list: `${ROOTS.COMMUNE}/list`,
     add: `${ROOTS.COMMUNE}/add`,
     edit: (id: string | number) => `${ROOTS.COMMUNE}/add/${id}`
+  },
+
+  company: {
+    root: `${ROOTS.COMPANY}/list`,
+    list: `${ROOTS.COMPANY}/list`,
+    add: `${ROOTS.COMPANY}/add`,
+    edit: (id: string | number) => `${ROOTS.COMPANY}/add/${id}`
   }
 }
