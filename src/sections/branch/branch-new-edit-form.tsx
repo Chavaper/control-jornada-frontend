@@ -21,9 +21,9 @@ import { paths } from '@/routes/paths'
 
 import { BRANCH_DEFAULT_VALUES, BranchFormValues, BranchSchema } from './branch'
 
-interface Props { branchId?: string }
+interface Props { branchId?: string; onSuccess?: () => void; onCancel?: () => void }
 
-export default function BranchNewEditForm({ branchId }: Props) {
+export default function BranchNewEditForm({ branchId, onSuccess, onCancel }: Props) {
   const router = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(Boolean(branchId))
@@ -84,7 +84,8 @@ export default function BranchNewEditForm({ branchId }: Props) {
         await createBranch(data)
       }
       enqueueSnackbar(branchId ? 'Sucursal actualizada' : 'Sucursal creada')
-      router.push(paths.branch.list)
+      if (onSuccess) onSuccess()
+      else router.push(paths.branch.list)
     } catch (error) {
       enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
     }
@@ -127,7 +128,11 @@ export default function BranchNewEditForm({ branchId }: Props) {
           <RHFTextField name="alias" label="Alias" inputProps={{ maxLength: 200 }} />
           <RHFSwitch name="active" label="Activa" />
           <Stack direction="row" spacing={2} justifyContent="flex-end">
-            <Button component={RouterLink} href={paths.branch.list} variant="outlined" color="inherit">Cancelar</Button>
+            {onCancel ? (
+              <Button onClick={onCancel} variant="outlined" color="inherit">Cancelar</Button>
+            ) : (
+              <Button component={RouterLink} href={paths.branch.list} variant="outlined" color="inherit">Cancelar</Button>
+            )}
             <Button type="submit" variant="contained" loading={isSubmitting}>{branchId ? 'Guardar cambios' : 'Crear sucursal'}</Button>
           </Stack>
         </Stack>

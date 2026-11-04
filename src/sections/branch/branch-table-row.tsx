@@ -1,10 +1,11 @@
 import DeleteIcon from '@mui/icons-material/DeleteOutline'
 import EditIcon from '@mui/icons-material/EditOutlined'
+import CheckIcon from '@mui/icons-material/Check'
+import CloseIcon from '@mui/icons-material/Close'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
-import Switch from '@mui/material/Switch'
 import Tooltip from '@mui/material/Tooltip'
 
 import { ConfirmDialog } from '@/components/custom-dialog'
@@ -15,10 +16,9 @@ interface Props {
   row: BranchModel
   onEditRow: VoidFunction
   onDeleteRow: VoidFunction
-  onToggleActive: (active: boolean) => Promise<void>
 }
 
-export default function BranchTableRow({ row, onEditRow, onDeleteRow, onToggleActive }: Props) {
+export default function BranchTableRow({ row, onEditRow, onDeleteRow }: Props) {
   const confirm = useBoolean()
   return <>
     <TableRow hover>
@@ -30,11 +30,7 @@ export default function BranchTableRow({ row, onEditRow, onDeleteRow, onToggleAc
       <TableCell>{row.phone || 'Sin Información'}</TableCell>
       <TableCell>{row.alias || 'Sin Información'}</TableCell>
       <TableCell>
-        <Switch
-          checked={!!row.active}
-          onChange={(event) => onToggleActive(event.target.checked)}
-          inputProps={{ 'aria-label': `Activar sucursal ${row.name}` }}
-        />
+        {row.active ? <CheckIcon color="success" aria-label="Sí" /> : <CloseIcon color="error" aria-label="No" />}
       </TableCell>
       <TableCell align="right">
         <Tooltip title="Editar"><IconButton onClick={onEditRow}><EditIcon /></IconButton></Tooltip>

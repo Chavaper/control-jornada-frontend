@@ -21,9 +21,9 @@ import { paths } from '@/routes/paths'
 
 import { JOB_TYPE_DEFAULT_VALUES, JobTypeFormValues, JobTypeSchema } from './job-type'
 
-interface Props { jobTypeId?: string }
+interface Props { jobTypeId?: string; onSuccess?: () => void; onCancel?: () => void }
 
-export default function JobTypeNewEditForm({ jobTypeId }: Props) {
+export default function JobTypeNewEditForm({ jobTypeId, onSuccess, onCancel }: Props) {
   const router = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(Boolean(jobTypeId))
@@ -58,7 +58,8 @@ export default function JobTypeNewEditForm({ jobTypeId }: Props) {
         await createJobType(data)
       }
       enqueueSnackbar(jobTypeId ? 'Tipo de trabajo actualizado' : 'Tipo de trabajo creado')
-      router.push(paths.jobType.list)
+      if (onSuccess) onSuccess()
+      else router.push(paths.jobType.list)
     } catch (error) { enqueueSnackbar(getErrorMessage(error), { variant: 'error' }) }
   })
 
@@ -84,7 +85,11 @@ export default function JobTypeNewEditForm({ jobTypeId }: Props) {
             </TextField>
           )} />
           <Stack direction="row" spacing={2} justifyContent="flex-end">
-            <Button component={RouterLink} href={paths.jobType.list} variant="outlined" color="inherit">Cancelar</Button>
+            {onCancel ? (
+              <Button onClick={onCancel} variant="outlined" color="inherit">Cancelar</Button>
+            ) : (
+              <Button component={RouterLink} href={paths.jobType.list} variant="outlined" color="inherit">Cancelar</Button>
+            )}
             <Button type="submit" variant="contained" loading={isSubmitting}>{jobTypeId ? 'Guardar cambios' : 'Crear tipo de trabajo'}</Button>
           </Stack>
         </Stack>
