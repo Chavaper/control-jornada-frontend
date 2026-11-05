@@ -24,7 +24,7 @@ export const navData: NavGroup[] = [
   {
     subheader: 'Opciones',
     items: [
-      { title: 'Tareas', path: paths.task.root, icon: <TaskIcon /> },
+//      { title: 'Tareas', path: paths.task.root, icon: <TaskIcon /> },
       {
         title: 'Registros de jornada',
         path: paths.register.root,
@@ -41,8 +41,13 @@ export const navData: NavGroup[] = [
         icon: <DescriptionIcon />
       },
       { title: 'Países', path: paths.country.root, icon: <TaskIcon /> },
+<<<<<<< HEAD
+      { title: 'Estados civiles', path: paths.maritalStatus.root, icon: <TaskIcon /> },
+      { title: 'Empleados', path: paths.employee.root, icon: <TaskIcon /> },
+=======
       { title: 'Regiones', path: paths.region.root, icon: <TaskIcon /> },
       { title: 'Justificaciones', path: paths.justification.root, icon: <DescriptionIcon /> },
+>>>>>>> upstream
       { title: 'Ciudades', path: paths.city.root, icon: <LocationCityIcon /> },
       { title: 'Comunas', path: paths.commune.root, icon: <ApartmentIcon /> },
       { title: 'Empresas', path: paths.company.root, icon: <BusinessIcon /> },
