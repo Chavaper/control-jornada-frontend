@@ -47,9 +47,7 @@ export const navData: NavGroup[] = [
       { title: 'Comunas', path: paths.commune.root, icon: <ApartmentIcon /> },
       { title: 'Empresas', path: paths.company.root, icon: <BusinessIcon /> },
       { title: 'Sucursales', path: paths.branch.root, icon: <BusinessIcon /> },
-      { title: 'Tipos de trabajo', path: paths.jobType.root, icon: <WorkIcon /> },
-      { title: 'Ciudades', path: paths.city.root, icon: <LocationCityIcon /> },
-      { title: 'Empresas', path: paths.company.root, icon: <BusinessIcon /> }
+      { title: 'Tipos de trabajo', path: paths.jobType.root, icon: <WorkIcon /> }
     ]
   }
 ]
