@@ -44,6 +44,18 @@ export const paths = {
     add: `${ROOTS.COUNTRY}/add`,
     edit: (id: string | number) => `${ROOTS.COUNTRY}/add/${id}`
   },
+  region: {
+    root: `${ROOTS.REGION}/list`,
+    list: `${ROOTS.REGION}/list`,
+    add: `${ROOTS.REGION}/add`,
+    edit: (id: string | number) => `${ROOTS.REGION}/add/${id}`
+  },
+  justification: {
+    root: `${ROOTS.JUSTIFICATION}/list`,
+    list: `${ROOTS.JUSTIFICATION}/list`,
+    add: `${ROOTS.JUSTIFICATION}/add`,
+    edit: (id: string | number) => `${ROOTS.JUSTIFICATION}/add/${id}`
+  },
 
   region: {
     root: `${ROOTS.REGION}/list`,

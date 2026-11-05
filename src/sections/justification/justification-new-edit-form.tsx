@@ -1,4 +1,3 @@
-
 import { yupResolver } from '@hookform/resolvers/yup'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
@@ -6,28 +5,19 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Stack from '@mui/material/Stack'
 import MenuItem from '@mui/material/MenuItem'
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 
 import FormProvider, { RHFTextField } from '@/components/hook-form'
-import type { JustificationTypeOption } from '@/model/justification.model'
+import { JustificationTypeOption } from '@/model/justification.model'
 import { useSnackbar } from '@/components/snackbar'
 import { getErrorMessage } from '@/helpers/API'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
-import {
-  createJustification,
-  getJustificationById,
-  updateJustification,
-  getJustificationTypes
-} from '@/services/rest/justification/justificationService'
-
+import { getAttachmentDownload } from '@/utils/attachment-download'
 import { paths } from '@/routes/paths'
+import { saveJustification, justificationById, updateJustification, allJustificationTypes } from '@/services/rest/indexJustification'
 
-import {
-  JUSTIFICATION_DEFAULT_VALUES,
-  JustificationFormValues,
-  JustificationSchema
-} from './justification'
+import { JUSTIFICATION_DEFAULT_VALUES, JustificationFormValues, JustificationSchema } from './justification'
 
 interface Props {
   justificationId?: string
@@ -36,7 +26,6 @@ interface Props {
 export default function JustificationNewEditForm({ justificationId }: Props) {
   const router = useRouter()
   const { enqueueSnackbar } = useSnackbar()
-
   const [loading, setLoading] = useState(!!justificationId)
   const [types, setTypes] = useState<JustificationTypeOption[]>([])
   const [loadingTypes, setLoadingTypes] = useState(true)
@@ -48,22 +37,25 @@ export default function JustificationNewEditForm({ justificationId }: Props) {
 
   const {
     reset,
+    setValue,
     handleSubmit,
     formState: { isSubmitting }
   } = methods
 
-  // Obtener justificación para edición
+  const attachment = useWatch({ control: methods.control, name: 'attachment' })
+  const [readingAttachment, setReadingAttachment] = useState(false)
+
   useEffect(() => {
     if (!justificationId) return
 
     const getJustification = async () => {
       try {
-        const justification = await getJustificationById(Number(justificationId))
+        const justification = await justificationById(justificationId)
 
         reset({
-          justificationTypeId: justification.justificationTypeId,
+          justificationType: { id: justification.justificationType.id },
           comments: justification.comments ?? '',
-          attachment: justification.attachment ?? null
+          attachment: justification.attachment
         })
       } catch (error) {
         enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
@@ -75,10 +67,8 @@ export default function JustificationNewEditForm({ justificationId }: Props) {
 
     getJustification()
   }, [justificationId, reset, enqueueSnackbar, router])
-
-  // Obtener tipos de justificación
   useEffect(() => {
-    getJustificationTypes()
+    allJustificationTypes()
       .then(setTypes)
       .catch((error) => {
         enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
@@ -86,26 +76,19 @@ export default function JustificationNewEditForm({ justificationId }: Props) {
       .finally(() => setLoadingTypes(false))
   }, [enqueueSnackbar])
 
-  // Crear o actualizar justificación
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const request = {
-        justificationTypeId: Number(data.justificationTypeId),
-        comments: data.comments?.trim() ?? '',
-        attachment: data.attachment ?? null
-      }
-
       if (justificationId) {
-        await updateJustification(Number(justificationId), request)
+        await updateJustification(justificationId, data)
         enqueueSnackbar('Justificación actualizada')
       } else {
-        await createJustification(request)
+        await saveJustification(data)
         enqueueSnackbar('Justificación creada')
       }
 
       router.push(paths.justification.list)
     } catch (error) {
-      enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
+      enqueueSnackbar('Error al guardar la justificación', { variant: 'error' })
     }
   })
 
@@ -121,35 +104,41 @@ export default function JustificationNewEditForm({ justificationId }: Props) {
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Card sx={{ p: 3 }}>
         <Stack spacing={3}>
-          <RHFTextField
-            name="justificationTypeId"
-            label="Tipo de justificación"
-            select
-            required
-          >
-            <MenuItem value={0}>
-              Selecciona un tipo
-            </MenuItem>
-
+          <RHFTextField name="comments" label="Comentarios" multiline rows={3} />
+          <RHFTextField name="justificationType.id" label="Tipo de justificación" select required>
+            <MenuItem value={0}>Selecciona un tipo</MenuItem>
             {types.map((type) => (
-              <MenuItem key={type.id} value={type.id}>
-                {type.name}
-              </MenuItem>
+              <MenuItem key={type.id} value={type.id}>{type.name}</MenuItem>
             ))}
           </RHFTextField>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Button component="label" variant="outlined" disabled={readingAttachment || isSubmitting}>
+              {readingAttachment ? 'Cargando archivo...' : attachment ? 'Cambiar archivo' : 'Adjuntar archivo (opcional)'}
+              <input type="file" hidden onChange={(event) => {
+                const file = event.target.files?.[0]
+                if (!file) return
+                setReadingAttachment(true)
+                const reader = new FileReader()
+                reader.onload = () => setValue('attachment', String(reader.result).split(',')[1], { shouldDirty: true })
+                reader.onerror = () => enqueueSnackbar('Hubo problemas con el archivo', { variant: 'error' })
+                reader.onloadend = () => setReadingAttachment(false)
+                reader.readAsDataURL(file)
+                event.target.value = ''
+              }} />
+            </Button>
+            {attachment !== null && (
+              <>
+                <Button component="a" {...getAttachmentDownload(attachment, 'adjunto')}>
+                  Descargar adjunto
+                </Button>
+                <Button color="error" disabled={readingAttachment || isSubmitting} onClick={() => setValue('attachment', null, { shouldDirty: true })}>
+                  Quitar adjunto
+                </Button>
+              </>
+            )}
+          </Stack>
 
-          <RHFTextField
-            name="comments"
-            label="Comentarios"
-            multiline
-            rows={3}
-          />
-
-          <Stack
-            direction="row"
-            spacing={2}
-            justifyContent="flex-end"
-          >
+          <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button
               component={RouterLink}
               href={paths.justification.list}
@@ -159,15 +148,8 @@ export default function JustificationNewEditForm({ justificationId }: Props) {
               Cancelar
             </Button>
 
-            <Button
-              type="submit"
-              variant="contained"
-              loading={isSubmitting}
-              disabled={!types.length}
-            >
-              {justificationId
-                ? 'Guardar cambios'
-                : 'Crear justificación'}
+            <Button type="submit" variant="contained" loading={isSubmitting} disabled={readingAttachment || !types.length}>
+              {justificationId ? 'Guardar cambios' : 'Crear justificación'}
             </Button>
           </Stack>
         </Stack>

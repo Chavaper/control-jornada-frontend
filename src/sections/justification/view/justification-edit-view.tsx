@@ -3,7 +3,7 @@
 import Container from '@mui/material/Container'
 
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs'
-import { justificationPaths } from '@/routes/justificationPaths'
+import { paths } from '@/routes/paths'
 
 import JustificationNewEditForm from '../justification-new-edit-form'
 
@@ -17,7 +17,7 @@ export default function JustificationEditView({ id }: Props) {
       <CustomBreadcrumbs
         heading="Editar justificación"
         links={[
-          { name: 'Justificaciones', href: justificationPaths.justification.root },
+          { name: 'Justificaciones', href: paths.justification.root },
           { name: `Justificación #${id}` }
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
