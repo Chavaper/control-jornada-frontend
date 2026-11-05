@@ -1,3 +1,4 @@
+import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined'
 import ApartmentIcon from '@mui/icons-material/Apartment'
 import BusinessIcon from '@mui/icons-material/BusinessOutlined'
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
@@ -23,6 +24,11 @@ export const navData: NavGroup[] = [
     subheader: 'Opciones',
     items: [
       { title: 'Tareas', path: paths.task.root, icon: <TaskIcon /> },
+      {
+        title: 'Registros de jornada',
+        path: paths.register.root,
+        icon: <AccessTimeOutlinedIcon />
+      },
       {
         title: 'Tipo de justificación',
         path: paths.justificationType.root,
