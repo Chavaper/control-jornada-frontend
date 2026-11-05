@@ -1,3 +1,6 @@
+import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined'
+import ApartmentIcon from '@mui/icons-material/Apartment'
+import BusinessIcon from '@mui/icons-material/BusinessOutlined'
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
 import DescriptionIcon from '@mui/icons-material/DescriptionOutlined'
 import LocationCityIcon from '@mui/icons-material/LocationCityOutlined'
@@ -22,6 +25,11 @@ export const navData: NavGroup[] = [
     items: [
       { title: 'Tareas', path: paths.task.root, icon: <TaskIcon /> },
       {
+        title: 'Registros de jornada',
+        path: paths.register.root,
+        icon: <AccessTimeOutlinedIcon />
+      },
+      {
         title: 'Tipo de justificación',
         path: paths.justificationType.root,
         icon: <CommentOutlinedIcon />
@@ -32,7 +40,11 @@ export const navData: NavGroup[] = [
         icon: <DescriptionIcon />
       },
       { title: 'Países', path: paths.country.root, icon: <TaskIcon /> },
-      { title: 'Ciudades', path: paths.city.root, icon: <LocationCityIcon /> }
+      { title: 'Regiones', path: paths.region.root, icon: <TaskIcon /> },
+      { title: 'Justificaciones', path: paths.justification.root, icon: <DescriptionIcon /> },
+      { title: 'Ciudades', path: paths.city.root, icon: <LocationCityIcon /> },
+      { title: 'Comunas', path: paths.commune.root, icon: <ApartmentIcon /> },
+      { title: 'Empresas', path: paths.company.root, icon: <BusinessIcon /> }
     ]
   }
 ]
