@@ -9,7 +9,6 @@ import { useForm } from 'react-hook-form'
 import FormProvider, { RHFTextField } from '@/components/hook-form'
 import { useSnackbar } from '@/components/snackbar'
 import { getErrorMessage } from '@/helpers/API'
-import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
 import {
@@ -100,8 +99,6 @@ export default function JustificationTypeNewEditForm({ justTypeId }: Props) {
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button
-              component={RouterLink}
-              href={paths.justificationType.list}
               variant="outlined"
               color="inherit"
             >
