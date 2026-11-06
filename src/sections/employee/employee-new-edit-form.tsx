@@ -35,6 +35,8 @@ import { allJobSchedulers } from '@/services/rest/job-scheduler/job-scheduler';
 
 interface Props {
   employeeId?: string
+  onSuccess?: () => void
+  onCancel?: () => void
 }
 
 interface Catalogs {
@@ -51,7 +53,7 @@ interface Catalogs {
 // para campos de fecha: mantiene la etiqueta arriba
 const dateProps = { slotProps: { inputLabel: { shrink: true } } }
 
-export default function EmployeeNewEditForm({ employeeId }: Props) {
+export default function EmployeeNewEditForm({ employeeId, onSuccess, onCancel }: Props) {
   const router = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(true)
@@ -109,7 +111,8 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
         }
       } catch (error) {
         enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
-        router.push(paths.employee.list)
+        if (onCancel) onCancel()
+        else router.push(paths.employee.list)
       } finally {
         setLoading(false)
       }
@@ -149,7 +152,8 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
         await saveEmployee(payload)
         enqueueSnackbar('Empleado creado')
       }
-      router.push(paths.employee.list)
+      if (onSuccess) onSuccess()
+      else router.push(paths.employee.list)
     } catch (error) {
       enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
     }
@@ -326,14 +330,20 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
           </Grid>
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
-            <Button
-              component={RouterLink}
-              href={paths.employee.list}
-              variant="outlined"
-              color="inherit"
-            >
-              Cancelar
-            </Button>
+            {onCancel ? (
+              <Button type="button" onClick={onCancel} variant="outlined" color="inherit">
+                Cancelar
+              </Button>
+            ) : (
+              <Button
+                component={RouterLink}
+                href={paths.employee.list}
+                variant="outlined"
+                color="inherit"
+              >
+                Cancelar
+              </Button>
+            )}
             <Button type="submit" variant="contained" loading={isSubmitting}>
               {employeeId ? 'Guardar cambios' : 'Crear empleado'}
             </Button>

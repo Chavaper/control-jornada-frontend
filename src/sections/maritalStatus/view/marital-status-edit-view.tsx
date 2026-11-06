@@ -22,7 +22,6 @@ export default function MaritalStatusEditView({ id }: Props) {
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
-
       <MaritalStatusNewEditForm maritalStatusId={id} />
     </Container>
   )
