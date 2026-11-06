@@ -11,41 +11,27 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-
 import FormProvider, { RHFTextField } from '@/components/hook-form'
 import { useSnackbar } from '@/components/snackbar'
 import { getErrorMessage } from '@/helpers/API'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
-
 import {
-  BranchModel,
-  CommuneModel,
-  ContractTypeModel,
-  CountryModel,
-  EmployeeRequest,
-  GenderModel,
-  JobSchedulerModel,
-  JobTypeModel,
-  MaritalStatusModel
+  BranchModel,CommuneModel,ContractTypeModel,
+  CountryModel,EmployeeRequest,GenderModel,
+  JobSchedulerModel,JobTypeModel,MaritalStatusModel
 } from '@/model'
 import {
-  allEmployees,
-  employeeById,
-  saveEmployee,
-  updateEmployee,
-  mockGenders,
-  mockJobTypes,
-  mockBranches,
-  mockJobSchedulers
+  employeeById,saveEmployee,updateEmployee, 
 } from '@/services/rest/employee/employee'
-
 import { allMaritalStatus } from '@/services/rest/maritalStatus/maritalStatus'
 import { allCountries } from '@/services/rest/country/countryService'
 import EntitySelectField from '@/components/entity-select-field'
 import { EMPLOYEE_DEFAULT_VALUES, EmployeeFormValues, EmployeeSchema } from './employee'
-import { allCommunes, allContractTypes } from '@/services/rest';
+import { allBranches, allCommunes, allContractTypes, allJobTypes } from '@/services/rest';
+import { allGenders } from '@/services/rest/gender/gender';
+import { allJobSchedulers } from '@/services/rest/job-scheduler/job-scheduler';
 
 interface Props {
   employeeId?: string
@@ -89,8 +75,8 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
         const [genders, maritalStatus, contractTypes, jobTypes,
           countries, branches, communes, jobSchedulers] =
           await Promise.all([
-            mockGenders(), allMaritalStatus(), allContractTypes(), mockJobTypes(),
-            allCountries(), mockBranches(), allCommunes(), mockJobSchedulers()
+            allGenders(), allMaritalStatus(), allContractTypes(), allJobTypes(),
+            allCountries(), allBranches(), allCommunes(), allJobSchedulers()
           ])
 
         setCatalogs({
