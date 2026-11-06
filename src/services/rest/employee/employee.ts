@@ -57,31 +57,9 @@ export const deleteEmployee = async (id: string | number): Promise<void> => {
 
 const delay = (ms = 150) => new Promise((r) => setTimeout(r, ms))
 
-export const mockGenders = async (): Promise<GenderModel[]> => {
-  await delay()
-  return [
-    { id: 1, name: 'Masculino' },
-    { id: 2, name: 'Femenino' }
-  ]
-}
-
-export const mockBranches = async (): Promise<BranchModel[]> => {
-  await delay()
-  return [
-    { id: 1, name: 'Headquarters' }
-  ]
-}
-
 export const mockJobSchedulers = async (): Promise<JobSchedulerModel[]> => {
   await delay()
   return [
     { id: 1, name: 'Standard Day' }
-  ]
-}
-
-export const mockJobTypes = async (): Promise<JobTypeModel[]> => {
-  await delay()
-  return [
-    { id: 1, name: 'Developer' }
   ]
 }

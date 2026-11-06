@@ -1,3 +1,5 @@
+'use client'
+
 import { yupResolver } from '@hookform/resolvers/yup'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
@@ -9,22 +11,33 @@ import { useForm } from 'react-hook-form'
 import FormProvider, { RHFTextField } from '@/components/hook-form'
 import { useSnackbar } from '@/components/snackbar'
 import { getErrorMessage } from '@/helpers/API'
+import { MaritalStatusModel } from '@/model/marital-status.model'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
+import {
+  maritalStatusById,
+  saveMaritalStatus,
+  updateMaritalStatus
+} from '@/services/rest/maritalStatus/maritalStatus'
+
 import {
   MARITAL_STATUS_DEFAULT_VALUES,
   MaritalStatusFormValues,
   MaritalStatusSchema
 } from './marital-status'
-import { maritalStatusById, saveMaritalStatus, updateMaritalStatus } from '@/services/rest/maritalStatus/maritalStatus';
-import { MaritalStatusModel } from '@/model/marital-status.model';
 
 interface Props {
   maritalStatusId?: string
+  onSuccess?: () => void
+  onCancel?: () => void
 }
 
-export default function MaritalStatusNewEditForm({ maritalStatusId }: Props) {
+export default function MaritalStatusNewEditForm({
+  maritalStatusId,
+  onSuccess,
+  onCancel
+}: Props) {
   const router = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(!!maritalStatusId)
@@ -49,14 +62,15 @@ export default function MaritalStatusNewEditForm({ maritalStatusId }: Props) {
         reset({ name: maritalStatus.name })
       } catch (error) {
         enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
-        router.push(paths.maritalStatus.list)
+        if (onCancel) onCancel()
+        else router.push(paths.maritalStatus.list)
       } finally {
         setLoading(false)
       }
     }
 
     getMaritalStatus()
-  }, [maritalStatusId, reset, enqueueSnackbar, router])
+  }, [maritalStatusId, reset, enqueueSnackbar, router, onCancel])
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -68,7 +82,8 @@ export default function MaritalStatusNewEditForm({ maritalStatusId }: Props) {
         await saveMaritalStatus(data)
         enqueueSnackbar('Estado civil creado')
       }
-      router.push(paths.maritalStatus.list)
+      if (onSuccess) onSuccess()
+      else router.push(paths.maritalStatus.list)
     } catch (error) {
       enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
     }
@@ -89,14 +104,20 @@ export default function MaritalStatusNewEditForm({ maritalStatusId }: Props) {
           <RHFTextField name="name" label="Nombre" required />
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
-            <Button
-              component={RouterLink}
-              href={paths.maritalStatus.list}
-              variant="outlined"
-              color="inherit"
-            >
-              Cancelar
-            </Button>
+            {onCancel ? (
+              <Button onClick={onCancel} variant="outlined" color="inherit">
+                Cancelar
+              </Button>
+            ) : (
+              <Button
+                component={RouterLink}
+                href={paths.maritalStatus.list}
+                variant="outlined"
+                color="inherit"
+              >
+                Cancelar
+              </Button>
+            )}
             <Button type="submit" variant="contained" loading={isSubmitting}>
               {maritalStatusId ? 'Guardar cambios' : 'Crear estado civil'}
             </Button>
