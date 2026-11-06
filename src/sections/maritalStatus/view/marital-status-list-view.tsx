@@ -4,6 +4,8 @@ import AddIcon from '@mui/icons-material/Add'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import Container from '@mui/material/Container'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableContainer from '@mui/material/TableContainer'
@@ -19,27 +21,28 @@ import {
   useTable
 } from '@/components/table'
 import { getErrorMessage } from '@/helpers/API'
-import { RouterLink } from '@/routes/components'
-import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
 import { getComparator, includesText, Order } from '@/utils/table-filter'
 
 import { TABLE_HEAD } from '../marital-status'
 import MaritalStatusTableRow from '../marital-status-table-row'
 import MaritalStatusTableToolbar from '../marital-status-table-toolbar'
+import MaritalStatusNewEditForm from '../marital-status-new-edit-form'
 
-import { MaritalStatusModel } from '@/model/marital-status.model';
-import { allMaritalStatus, deleteMaritalStatus } from '@/services/rest/maritalStatus/maritalStatus';
-
+import { MaritalStatusModel } from '@/model/marital-status.model'
+import { allMaritalStatus, deleteMaritalStatus } from '@/services/rest/maritalStatus/maritalStatus'
 
 export default function MaritalStatusListView() {
-  const router = useRouter()
   const table = useTable()
   const { enqueueSnackbar } = useSnackbar()
 
   const [maritalStatusList, setMaritalStatusList] = useState<MaritalStatusModel[]>([])
   const [loading, setLoading] = useState(true)
   const [searchText, setSearchText] = useState('')
+  const [openCreate, setOpenCreate] = useState(false)
+  const [editId, setEditId] = useState<string>()
+
+  const refresh = () => allMaritalStatus().then(setMaritalStatusList)
 
   useEffect(() => {
     const getMaritalStatusList = async () => {
@@ -96,8 +99,7 @@ export default function MaritalStatusListView() {
         ]}
         action={
           <Button
-            component={RouterLink}
-            href={paths.maritalStatus.add}
+            onClick={() => setOpenCreate(true)}
             variant="contained"
             startIcon={<AddIcon />}
           >
@@ -127,7 +129,7 @@ export default function MaritalStatusListView() {
                   <MaritalStatusTableRow
                     key={row.id}
                     row={row}
-                    onEditRow={() => router.push(paths.maritalStatus.edit(row.id))}
+                    onEditRow={() => setEditId(String(row.id))}
                     onDeleteRow={() => handleDeleteRow(row.id)}
                   />
                 ))}
@@ -147,6 +149,33 @@ export default function MaritalStatusListView() {
           onRowsPerPageChange={table.onChangeRowsPerPage}
         />
       </Card>
+
+      {/* Modal crear */}
+      <Dialog open={openCreate} onClose={() => setOpenCreate(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Agregar estado civil</DialogTitle>
+        <MaritalStatusNewEditForm
+          onSuccess={() => {
+            setOpenCreate(false)
+            refresh()
+          }}
+          onCancel={() => setOpenCreate(false)}
+        />
+      </Dialog>
+
+      {/* Modal editar */}
+      <Dialog open={Boolean(editId)} onClose={() => setEditId(undefined)} fullWidth maxWidth="sm">
+        <DialogTitle>Editar estado civil</DialogTitle>
+        {editId && (
+          <MaritalStatusNewEditForm
+            maritalStatusId={editId}
+            onSuccess={() => {
+              setEditId(undefined)
+              refresh()
+            }}
+            onCancel={() => setEditId(undefined)}
+          />
+        )}
+      </Dialog>
     </Container>
   )
 }

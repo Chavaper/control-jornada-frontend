@@ -11,44 +11,32 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-
 import FormProvider, { RHFTextField } from '@/components/hook-form'
 import { useSnackbar } from '@/components/snackbar'
 import { getErrorMessage } from '@/helpers/API'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
-
 import {
-  BranchModel,
-  CommuneModel,
-  ContractTypeModel,
-  CountryModel,
-  EmployeeRequest,
-  GenderModel,
-  JobSchedulerModel,
-  JobTypeModel,
-  MaritalStatusModel
+  BranchModel,CommuneModel,ContractTypeModel,
+  CountryModel,EmployeeRequest,GenderModel,
+  JobSchedulerModel,JobTypeModel,MaritalStatusModel
 } from '@/model'
 import {
-  allEmployees,
-  employeeById,
-  saveEmployee,
-  updateEmployee,
-  mockGenders,
-  mockJobTypes,
-  mockBranches,
-  mockJobSchedulers
+  employeeById,saveEmployee,updateEmployee, 
 } from '@/services/rest/employee/employee'
-
 import { allMaritalStatus } from '@/services/rest/maritalStatus/maritalStatus'
 import { allCountries } from '@/services/rest/country/countryService'
 import EntitySelectField from '@/components/entity-select-field'
 import { EMPLOYEE_DEFAULT_VALUES, EmployeeFormValues, EmployeeSchema } from './employee'
-import { allCommunes, allContractTypes } from '@/services/rest';
+import { allBranches, allCommunes, allContractTypes, allJobTypes } from '@/services/rest';
+import { allGenders } from '@/services/rest/gender/gender';
+import { allJobSchedulers } from '@/services/rest/job-scheduler/job-scheduler';
 
 interface Props {
   employeeId?: string
+  onSuccess?: () => void
+  onCancel?: () => void
 }
 
 interface Catalogs {
@@ -65,7 +53,7 @@ interface Catalogs {
 // para campos de fecha: mantiene la etiqueta arriba
 const dateProps = { slotProps: { inputLabel: { shrink: true } } }
 
-export default function EmployeeNewEditForm({ employeeId }: Props) {
+export default function EmployeeNewEditForm({ employeeId, onSuccess, onCancel }: Props) {
   const router = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(true)
@@ -89,8 +77,8 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
         const [genders, maritalStatus, contractTypes, jobTypes,
           countries, branches, communes, jobSchedulers] =
           await Promise.all([
-            mockGenders(), allMaritalStatus(), allContractTypes(), mockJobTypes(),
-            allCountries(), mockBranches(), allCommunes(), mockJobSchedulers()
+            allGenders(), allMaritalStatus(), allContractTypes(), allJobTypes(),
+            allCountries(), allBranches(), allCommunes(), allJobSchedulers()
           ])
 
         setCatalogs({
@@ -123,7 +111,8 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
         }
       } catch (error) {
         enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
-        router.push(paths.employee.list)
+        if (onCancel) onCancel()
+        else router.push(paths.employee.list)
       } finally {
         setLoading(false)
       }
@@ -163,7 +152,8 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
         await saveEmployee(payload)
         enqueueSnackbar('Empleado creado')
       }
-      router.push(paths.employee.list)
+      if (onSuccess) onSuccess()
+      else router.push(paths.employee.list)
     } catch (error) {
       enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
     }
@@ -340,14 +330,20 @@ export default function EmployeeNewEditForm({ employeeId }: Props) {
           </Grid>
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
-            <Button
-              component={RouterLink}
-              href={paths.employee.list}
-              variant="outlined"
-              color="inherit"
-            >
-              Cancelar
-            </Button>
+            {onCancel ? (
+              <Button type="button" onClick={onCancel} variant="outlined" color="inherit">
+                Cancelar
+              </Button>
+            ) : (
+              <Button
+                component={RouterLink}
+                href={paths.employee.list}
+                variant="outlined"
+                color="inherit"
+              >
+                Cancelar
+              </Button>
+            )}
             <Button type="submit" variant="contained" loading={isSubmitting}>
               {employeeId ? 'Guardar cambios' : 'Crear empleado'}
             </Button>

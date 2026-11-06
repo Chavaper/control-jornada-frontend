@@ -4,6 +4,8 @@ import AddIcon from '@mui/icons-material/Add'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import Container from '@mui/material/Container'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableContainer from '@mui/material/TableContainer'
@@ -19,26 +21,49 @@ import {
   useTable
 } from '@/components/table'
 import { getErrorMessage } from '@/helpers/API'
-import { RouterLink } from '@/routes/components'
-import { useRouter } from '@/routes/hooks'
+import { EmployeeModel } from '@/model/employee.model'
 import { paths } from '@/routes/paths'
+import { allEmployees, deleteEmployee } from '@/services/rest/employee/employee'
 import { getComparator, includesText, Order } from '@/utils/table-filter'
 
-import { EmployeeModel } from '@/model/employee.model'
-import { allEmployees, deleteEmployee } from '@/services/rest/employee/employee'
-
 import { TABLE_HEAD } from '../employee'
+import EmployeeNewEditForm from '../employee-new-edit-form'
 import EmployeeTableRow from '../employee-table-row'
 import EmployeeTableToolbar from '../employee-table-toolbar'
 
+function applyFilter({
+  employeeList,
+  searchText,
+  order,
+  orderBy
+}: {
+  employeeList: EmployeeModel[]
+  searchText: string
+  order: Order
+  orderBy: keyof EmployeeModel
+}) {
+  return [...employeeList]
+    .filter(
+      (e) =>
+        !searchText ||
+        includesText(e.name, searchText) ||
+        includesText(e.lastName, searchText) ||
+        includesText(e.code, searchText)
+    )
+    .sort(getComparator<EmployeeModel>(order, orderBy))
+}
+
 export default function EmployeeListView() {
-  const router = useRouter()
   const table = useTable()
   const { enqueueSnackbar } = useSnackbar()
 
   const [employeeList, setEmployeeList] = useState<EmployeeModel[]>([])
   const [loading, setLoading] = useState(true)
   const [searchText, setSearchText] = useState('')
+  const [openCreate, setOpenCreate] = useState(false)
+  const [editId, setEditId] = useState<string>()
+
+  const refresh = () => allEmployees().then(setEmployeeList)
 
   useEffect(() => {
     const getEmployeeList = async () => {
@@ -55,6 +80,7 @@ export default function EmployeeListView() {
     getEmployeeList()
   }, [enqueueSnackbar])
 
+  // --- Datos derivados ---
   const dataFiltered = applyFilter({
     employeeList,
     searchText,
@@ -85,6 +111,17 @@ export default function EmployeeListView() {
     }
   }
 
+  const handleCreateSuccess = () => {
+    setOpenCreate(false)
+    refresh()
+  }
+
+  const handleEditSuccess = () => {
+    setEditId(undefined)
+    refresh()
+  }
+
+  // --- Render ---
   return (
     <Container maxWidth="xl">
       <CustomBreadcrumbs
@@ -95,8 +132,7 @@ export default function EmployeeListView() {
         ]}
         action={
           <Button
-            component={RouterLink}
-            href={paths.employee.add}
+            onClick={() => setOpenCreate(true)}
             variant="contained"
             startIcon={<AddIcon />}
           >
@@ -126,7 +162,7 @@ export default function EmployeeListView() {
                   <EmployeeTableRow
                     key={row.id}
                     row={row}
-                    onEditRow={() => router.push(paths.employee.edit(row.id))}
+                    onEditRow={() => setEditId(String(row.id))}
                     onDeleteRow={() => handleDeleteRow(row.id)}
                   />
                 ))}
@@ -146,28 +182,27 @@ export default function EmployeeListView() {
           onRowsPerPageChange={table.onChangeRowsPerPage}
         />
       </Card>
+
+      {/* Modal: crear */}
+      <Dialog open={openCreate} onClose={() => setOpenCreate(false)} fullWidth maxWidth="md">
+        <DialogTitle>Agregar empleado</DialogTitle>
+        <EmployeeNewEditForm
+          onSuccess={handleCreateSuccess}
+          onCancel={() => setOpenCreate(false)}
+        />
+      </Dialog>
+
+      {/* Modal: editar */}
+      <Dialog open={Boolean(editId)} onClose={() => setEditId(undefined)} fullWidth maxWidth="md">
+        <DialogTitle>Editar empleado</DialogTitle>
+        {editId && (
+          <EmployeeNewEditForm
+            employeeId={editId}
+            onSuccess={handleEditSuccess}
+            onCancel={() => setEditId(undefined)}
+          />
+        )}
+      </Dialog>
     </Container>
   )
-}
-
-function applyFilter({
-  employeeList,
-  searchText,
-  order,
-  orderBy
-}: {
-  employeeList: EmployeeModel[]
-  searchText: string
-  order: Order
-  orderBy: keyof EmployeeModel
-}) {
-  return [...employeeList]
-    .filter(
-      (e) =>
-        !searchText ||
-        includesText(e.name, searchText) ||
-        includesText(e.lastName, searchText) ||
-        includesText(e.code, searchText)
-    )
-    .sort(getComparator<EmployeeModel>(order, orderBy))
 }
