@@ -22,14 +22,14 @@ export default function JustificationTableRow({ row, onEditRow, onDeleteRow }: P
     <>
       <TableRow hover>
         <TableCell>{row.id}</TableCell>
-        <TableCell>{row.justificationTypeName}</TableCell>
+        <TableCell>{row.justificationType.name}</TableCell>
         <TableCell sx={{ overflowWrap: 'anywhere' }}>{row.comments || 'Sin comentarios'}</TableCell>
         <TableCell>
           {row.attachment !== null ? (
             <Button size="small" component="a" {...getAttachmentDownload(row.attachment, `justificacion-${row.id}`)}>
               Descargar
             </Button>
-          ) : 'Sin adjunto'}
+          ) : 'Sin archivo adjunto'}
         </TableCell>
         <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
           <Button

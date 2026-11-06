@@ -22,7 +22,7 @@ import { getErrorMessage } from '@/helpers/API'
 import { JustificationModel } from '@/model/justification.model'
 import { RouterLink } from '@/routes/components'
 import { useRouter } from '@/routes/hooks'
-import { justificationPaths } from '@/routes/justificationPaths'
+import { paths } from '@/routes/paths'
 import { allJustifications, deleteJustification } from '@/services/rest/indexJustification'
 import { getComparator, includesText, Order } from '@/utils/table-filter'
 
@@ -80,7 +80,7 @@ export default function JustificationListView() {
         table.onChangePage(null, table.page - 1)
       }
     } catch (error) {
-      enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
+      enqueueSnackbar("Primero elimina todos los registros con esta justificación", { variant: 'error' })
     }
   }
 
@@ -88,11 +88,11 @@ export default function JustificationListView() {
     <Container maxWidth="xl">
       <CustomBreadcrumbs
         heading="Lista de justificaciones"
-        links={[{ name: 'Justificaciones', href: justificationPaths.justification.root },{ name: 'Lista' }]}
+        links={[{ name: 'Justificaciones', href: paths.justification.root },{ name: 'Lista' }]}
         action={
           <Button
             component={RouterLink}
-            href={justificationPaths.justification.add}
+            href={paths.justification.add}
             variant="contained"
             startIcon={<AddIcon />}
           >
@@ -122,13 +122,13 @@ export default function JustificationListView() {
                   <JustificationTableRow
                     key={row.id}
                     row={row}
-                    onEditRow={() => router.push(justificationPaths.justification.edit(row.id))}
+                    onEditRow={() => router.push(paths.justification.edit(row.id))}
                     onDeleteRow={() => handleDeleteRow(row.id)}
                   />
                 ))}
 
               {!loading && !dataFiltered.length && (
-                <TableNoData colSpan={TABLE_HEAD.length} message="No hay justificaciones para mostrar" />
+                <TableNoData colSpan={TABLE_HEAD.length} message="Tenemos problemas para mostrar las justificaciones" />
               )}
             </TableBody>
           </Table>
@@ -162,7 +162,7 @@ function applyFilter({
       (justification) =>
         !searchText || 
         includesText(justification.comments, searchText) ||
-        includesText(justification.justificationTypeName, searchText)
+        includesText(justification.justificationType.name, searchText)
     )
     .sort(getComparator<JustificationModel>(order, orderBy))
 }
