@@ -3,7 +3,7 @@ export interface JustificationModel {
   comments: string | null
   attachment: string | null
   justificationTypeId: number
-  justificationTypeName?: string
+  justificationTypeName: string | null
 }
 
 export type JustificationRequest = Omit<
