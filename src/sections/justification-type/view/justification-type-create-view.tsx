@@ -4,10 +4,15 @@ import Container from '@mui/material/Container'
 
 import JustificationTypeNewEditForm from '../justification-type-new-edit-form'
 
-export default function TaskCreateView() {
+interface Props {
+  onClose: () => void
+  onSuccess: () => void
+}
+
+export default function JustificationTypeCreateView({ onClose, onSuccess } : Props) {
   return (
-    <Container>
-      <JustificationTypeNewEditForm />
+    <Container disableGutters>
+      <JustificationTypeNewEditForm onClose={onClose} onSuccess={onSuccess}/>
     </Container>
   )
 }

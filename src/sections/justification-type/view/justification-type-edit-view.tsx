@@ -6,12 +6,14 @@ import JustificationTypeNewEditForm from '../justification-type-new-edit-form'
 
 interface Props {
   id: string
+  onClose: () => void
+  onSuccess: () => void
 }
 
-export default function TaskEditView({ id }: Props) {
+export default function JustificationTypeEditView({ id, onClose, onSuccess }: Props) {
   return (
-    <Container>
-      <JustificationTypeNewEditForm justTypeId={id} />
+    <Container disableGutters>
+      <JustificationTypeNewEditForm justTypeId={id} onClose={onClose} onSuccess={onSuccess}/>
     </Container>
   )
 }

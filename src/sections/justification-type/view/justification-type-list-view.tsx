@@ -7,7 +7,7 @@ import Container from '@mui/material/Container'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableContainer from '@mui/material/TableContainer'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs'
 import { useSnackbar } from '@/components/snackbar'
@@ -20,7 +20,6 @@ import {
 } from '@/components/table'
 import { getErrorMessage } from '@/helpers/API'
 import { JustificationTypeModel } from '@/model'
-import { useRouter } from '@/routes/hooks'
 import { paths } from '@/routes/paths'
 import { allJustificationTypes, deleteJustificationType } from '@/services/rest'
 import { getComparator, includesText, Order } from '@/utils/table-filter'
@@ -32,23 +31,19 @@ import Modal from '@mui/material/Modal'
 import { JustificationTypeCreateView, JustificationTypeEditView } from '.'
 import Box from '@mui/material/Box'
 
-interface ModalState {
-  activeId?: number | "no-id"
-}
+type ModalActiveId = number | "no-id" | undefined
 
-const style = {
+const modalBoxStyle = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 600,
-  // bgcolor: 'background.paper',
-  // border: '2px solid #000',
   boxShadow: 24,
+  borderRadius: 3
 };
 
 export default function JustifcationTypeListView() {
-  const router = useRouter()
   const table = useTable()
   const { enqueueSnackbar } = useSnackbar()
 
@@ -57,24 +52,25 @@ export default function JustifcationTypeListView() {
   >([])
   const [loading, setLoading] = useState(true)
   const [searchText, setSearchText] = useState('')
-  const [modalState, setModalState] = useState<
-    ModalState
-  >({ })
+  const [modalActiveId, setModalActiveId] = useState<
+    ModalActiveId
+  >(undefined)
+
+  const getJustificationTypes = useCallback(async () => {
+    try {
+      const response = await allJustificationTypes()
+      setJustificationTypeList(response)
+    } catch (error) {
+      enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
+    } finally {
+      setLoading(false)
+    }
+  }, [enqueueSnackbar])
 
   useEffect(() => {
-    const getJustificationTypes = async () => {
-      try {
-        const response = await allJustificationTypes()
-        setJustificationTypeList(response)
-      } catch (error) {
-        enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
-      } finally {
-        setLoading(false)
-      }
-    }
-
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- El setState es posterior al async [falso positivo de ESLint en este caso]
     getJustificationTypes()
-  }, [enqueueSnackbar])
+  }, [getJustificationTypes])
 
   const dataFiltered = applyFilter({
     justificationTypeList,
@@ -109,15 +105,20 @@ export default function JustifcationTypeListView() {
   }
 
   const handleAddClick = () => {
-    setModalState({ activeId: 'no-id' })
+    setModalActiveId('no-id')
   }
 
   const handleEditClick = (id: number) => {
-    setModalState({ activeId: id })
+    setModalActiveId(id)
   }
 
   const handleModalClose = () => {
-    setModalState({ })
+    setModalActiveId(undefined)
+  }
+
+  const handleAddEditSuccess = () => {
+    setLoading(true)
+    getJustificationTypes() // se vuelve a actualizar los datos de la lista (equivalente a volver a la página como era antes)
   }
 
   return (
@@ -190,16 +191,16 @@ export default function JustifcationTypeListView() {
       </Container>
 
       <Modal
-        open={!!modalState.activeId}
+        open={!!modalActiveId}
         onClose={handleModalClose}
       >
-        <Box sx={style}>
+        <Box sx={modalBoxStyle}>
           {
-            modalState && modalState.activeId && (
-              modalState.activeId == 'no-id' ? (
-                <JustificationTypeCreateView />
+            modalActiveId && (
+              modalActiveId == 'no-id' ? (
+                <JustificationTypeCreateView onClose={handleModalClose} onSuccess={handleAddEditSuccess}/>
               ) : (
-                <JustificationTypeEditView id={modalState.activeId.toString()}/>
+                <JustificationTypeEditView id={modalActiveId.toString()} onClose={handleModalClose} onSuccess={handleAddEditSuccess}/>
               )
             )
           }
