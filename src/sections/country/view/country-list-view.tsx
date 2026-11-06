@@ -10,6 +10,7 @@ import TableContainer from '@mui/material/TableContainer'
 import { useEffect, useState } from 'react'
 
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs'
+import { EmptyContent } from '@/components/empty-content'
 import { useSnackbar } from '@/components/snackbar'
 import {
   TableHeadCustom,
@@ -18,7 +19,7 @@ import {
   TablePaginationCustom,
   useTable
 } from '@/components/table'
-import { getErrorMessage } from '@/helpers/API'
+import { ApiError, getErrorMessage } from '@/helpers/API'
 import { useBoolean } from '@/hooks/use-boolean'
 import { paths } from '@/routes/paths'
 import { allCountries, deleteCountry } from '@/services/rest'
@@ -27,7 +28,7 @@ import { getComparator, includesText, Order } from '@/utils/table-filter'
 import { TABLE_HEAD } from '../country'
 import { CountryModel } from '@/model/country.model'
 import CountryNewEditDialog from '../country-new-edit-dialog'
-import CountryTableRow from '../country-table-row'
+import CountryTableRow, { DeleteResult } from '../country-table-row'
 import CountryTableToolbar from '../country-table-toolbar'
 
 export default function CountryListView() {
@@ -39,6 +40,7 @@ export default function CountryListView() {
   const [loading, setLoading] = useState(true)
   const [searchText, setSearchText] = useState('')
   const [editingId, setEditingId] = useState<string>()
+  const [loadError, setLoadError] = useState<string>()
 
   useEffect(() => {
     const getCountries = async () => {
@@ -46,7 +48,11 @@ export default function CountryListView() {
         const response = await allCountries()
         setCountryList(response)
       } catch (error) {
-        enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
+        if (error instanceof TypeError) {
+          setLoadError(getErrorMessage(error))
+        } else {
+          enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
+        }
       } finally {
         setLoading(false)
       }
@@ -67,21 +73,29 @@ export default function CountryListView() {
     table.page * table.rowsPerPage + table.rowsPerPage
   )
 
+  const notFound = !loading && countryList.length > 0 && !dataFiltered.length
+
   const handleSearch = (value: string) => {
     table.onResetPage()
     setSearchText(value)
   }
 
-  const handleDeleteRow = async (id: number) => {
+  const handleDeleteRow = async (id: number): Promise<DeleteResult> => {
     try {
       await deleteCountry(id)
-      enqueueSnackbar('País eliminado')
-      setCountryList((prev) => prev.filter((country) => country.id !== id))
-      if (dataInPage.length === 1 && table.page > 0) {
-        table.onChangePage(null, table.page - 1)
-      }
+      return 'deleted'
     } catch (error) {
+      if (error instanceof ApiError && error.status === 409) return 'conflict'
       enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
+      return 'error'
+    }
+  }
+
+  // Se llama cuando se cierra el modal de "País eliminado"
+  const handleRemoveRow = (id: number) => {
+    setCountryList((prev) => prev.filter((country) => country.id !== id))
+    if (dataInPage.length === 1 && table.page > 0) {
+      table.onChangePage(null, table.page - 1)
     }
   }
 
@@ -108,59 +122,88 @@ export default function CountryListView() {
     <Container maxWidth="xl">
       <CustomBreadcrumbs
         heading="Lista de países"
-        links={[{ name: 'Países', href: paths.country.root }, { name: 'Lista' }]}
+        links={[
+          { name: 'Países', href: paths.country.root },
+          { name: 'Lista' }
+        ]}
         action={
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={handleAdd}
+          >
             Agregar
           </Button>
         }
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <Card>
-        <CountryTableToolbar text={searchText} onChangeText={handleSearch} />
-
-        <TableContainer>
-          <Table sx={{ minWidth: 720 }}>
-            <TableHeadCustom
-              headLabel={TABLE_HEAD}
-              order={table.order}
-              orderBy={table.orderBy}
-              onSort={table.onSort}
+      {loadError ? (
+        <EmptyContent
+          image="/assets/illustrations/server-down.svg"
+          message={loadError}
+        />
+      ) : (
+        <>
+          <Card>
+            <CountryTableToolbar
+              text={searchText}
+              onChangeText={handleSearch}
             />
 
-            <TableBody>
-              {loading && <TableLoading colSpan={TABLE_HEAD.length} />}
+            {notFound ? (
+              <EmptyContent
+                image="/assets/illustrations/item-not-found.svg"
+                message="No existe el país que busca"
+              />
+            ) : (
+              <>
+                <TableContainer>
+                  <Table sx={{ minWidth: 720 }}>
+                    <TableHeadCustom
+                      headLabel={TABLE_HEAD}
+                      order={table.order}
+                      orderBy={table.orderBy}
+                      onSort={table.onSort}
+                    />
 
-              {!loading &&
-                dataInPage.map((row) => (
-                  <CountryTableRow
-                    key={row.id}
-                    row={row}
-                    onEditRow={() => handleEdit(row.id)}
-                    onDeleteRow={() => handleDeleteRow(row.id)}
-                  />
-                ))}
+                    <TableBody>
+                      {loading && <TableLoading colSpan={TABLE_HEAD.length} />}
 
-              {!loading && !dataFiltered.length && (
-                <TableNoData 
-                  colSpan={TABLE_HEAD.length} 
-                  message='No hay países por mostrar'
-                  image={countryList.length ? undefined : '/assets/illustrations/empty-table.svg'}
+                      {!loading &&
+                        dataInPage.map((row) => (
+                          <CountryTableRow
+                            key={row.id}
+                            row={row}
+                            onEditRow={() => handleEdit(row.id)}
+                            onDeleteRow={() => handleDeleteRow(row.id)}
+                            onRemoved={() => handleRemoveRow(row.id)}
+                          />
+                        ))}
+
+                      {!loading && !countryList.length && (
+                        <TableNoData
+                          colSpan={TABLE_HEAD.length}
+                          message="No hay países por mostrar"
+                          image="/assets/illustrations/empty-table.svg"
+                        />
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+
+                <TablePaginationCustom
+                  count={dataFiltered.length}
+                  page={table.page}
+                  rowsPerPage={table.rowsPerPage}
+                  onPageChange={table.onChangePage}
+                  onRowsPerPageChange={table.onChangeRowsPerPage}
                 />
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        <TablePaginationCustom
-          count={dataFiltered.length}
-          page={table.page}
-          rowsPerPage={table.rowsPerPage}
-          onPageChange={table.onChangePage}
-          onRowsPerPageChange={table.onChangeRowsPerPage}
-        />
-      </Card>
+              </>
+            )}
+          </Card>
+        </>
+      )}
 
       <CountryNewEditDialog
         open={dialog.value}

@@ -48,7 +48,7 @@ export default function CountryNewEditForm({ countryId, onSuccess, onCancel }: P
         const country = await countryById(countryId)
         reset({
           name: country.name,
-          nationality: country.nationality ?? ''
+          nationality: country.nationality
         })
       } catch (error) {
         enqueueSnackbar(getErrorMessage(error), { variant: 'error' })
@@ -98,15 +98,17 @@ export default function CountryNewEditForm({ countryId, onSuccess, onCancel }: P
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Card sx={onCancel ? { pt: 1, boxShadow: 'none', overflow: 'visible' } : { p: 3 }}>
         <Stack spacing={3}>
-          <RHFTextField name="name" label="Nombre" required />
+          <RHFTextField 
+            name="name" 
+            label="Nombre" 
+            required 
+          />
           <RHFTextField
             name="nationality"
             label="Nacionalidad"
-            multiline
-            rows={3}
+            required
           />
-          {/* <RHFSwitch name="completed" label="Completada" /> */}
-
+          
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             {onCancel ? (
               <Button variant="outlined" color="inherit" onClick={onCancel}>
