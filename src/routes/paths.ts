@@ -14,7 +14,7 @@ export const paths = {
   country: {
     root: `${ROOTS.COUNTRY}/list`,
     list: `${ROOTS.COUNTRY}/list`,
-    add: `${ROOTS.COUNTRY}/add`,
-    edit: (id: string | number) => `${ROOTS.COUNTRY}/add/${id}`
+    //add: `${ROOTS.COUNTRY}/add`,
+    //edit: (id: string | number) => `${ROOTS.COUNTRY}/add/${id}`
   }
 }
