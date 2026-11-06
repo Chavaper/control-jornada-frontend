@@ -31,9 +31,9 @@ import type {
 } from '@/model/justification.model'
 
 import {
-  getJustificationTypes,
-  getJustificationById,
-  createJustification,
+  allJustificationTypes as getJustificationTypes,
+  justificationById as getJustificationById,
+  saveJustification as createJustification,
   updateJustification
 } from '@/services/rest/justification/justificationService'
 
@@ -100,7 +100,10 @@ export default function RegisterNewEditForm({ registerId }: Props) {
         if (justificationId !== null) {
         const justification = await getJustificationById(justificationId)
 
-        justificationTypeId = justification.justificationTypeId
+        justificationTypeId =
+          justification.justificationTypeId ??
+          justification.justificationType?.id ??
+          null
         justificationComments = justification.comments ?? ''
 
         setExistingAttachment(justification.attachment)
